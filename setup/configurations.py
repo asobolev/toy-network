@@ -23,10 +23,8 @@ IAF_COND_DIFF_EXP = NeuronSetup(**{
         'tau_NMDA_fall': 100.,
     },
     'lat_ex_input_ports': [1],  # NMDA-AMPA input
-    'noise_paras': {  # in objsim: 0.05294 to get 3 Hz background noise
-        'p_rate': 50000.,
-        'amplitude': 0.05275
-    }
+    'noise_firing_rate': 50000.,
+    'noise_amplitude': 0.05275  # in objsim: 0.05294 to get 3 Hz background noise
 })
 
 
@@ -53,10 +51,8 @@ INHIBITORY_NEURON = NeuronSetup(**{
         'const_GABA_input': 4.62,  # to reduce background noise to 3 Hz
     },
     'lat_ex_input_ports': [1],  # NMDA-AMPA input
-    'noise_paras': {  # to get 100 Hz background noise
-        'p_rate': 50000.,
-        'amplitude': 0.0504967
-    }
+    'noise_firing_rate': 50000.,
+    'noise_amplitude': 0.0504967   # to get 100 Hz background noise
 })
 
 
@@ -64,8 +60,19 @@ INPUT_NEURON = NeuronSetup(**{
     'model': 'pixel_iaf_psc_exp',
     'para_dict': {},
     'lat_ex_input_ports': [],
-    'noise_paras': {  # 3 Hz background noise
-        'p_rate': 12000.,
-        'amplitude': 13.9
-    }
+    'noise_firing_rate': 12000.,
+    'noise_amplitude': 13.9  # 3 Hz background noise
+})
+
+
+IMAGE_SEQUENCE_GENERATOR = ImageSequenceGeneratorSetup(**{
+    'movie_path': 'data/gauss20x20.idlmov',
+    'stimuli_duration': 20.0,
+    'stimuli_per_object': 5,
+    'nx': 20,
+    'ny': 20,
+    'pre_ISI': 2.0,
+    'post_ISI': 2.5,
+    'type': 'xysequence',
+    'stim_direction': 'x_continuous'
 })
