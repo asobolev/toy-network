@@ -3,10 +3,6 @@ import nest
 import nest.topology as tp
 
 
-INPUT_MOVIE = 'data/gauss20x20.idlmov'
-
-
-
 def image_sequence_generator_showcase():
 
     pre_ISI = 2.0
@@ -25,9 +21,6 @@ def image_sequence_generator_showcase():
     img_seq = nest.Create('image_sequence_generator', 1, ISG_config.as_dict)
 
     nest.Simulate(0.5 * single_stim_time)
-
-    import ipdb
-    ipdb.set_trace()
 
     for i in range(stimuli_per_object):
         frame_num = nest.GetStatus(img_seq, 'current_frame_num')[0]
@@ -59,11 +52,11 @@ class InputLayer(object):
         })
 
         self._nest_nodes = nest.GetNodes(self._nest_layer)[0]
-        nest.SetStatus(self._nest_nodes, {"V_m":0.})
+        nest.SetStatus(self._nest_nodes, {"V_m": 0.})
 
         self._movie = nest.Create('image_sequence_generator', 1, ISG_setup.as_dict)
-        
-        nodes = iter(self._nest_nodes) 
+
+        nodes = iter(self._nest_nodes)
         for x, y in itertools.product(range(x_dim), range(y_dim)):
             node = nodes.next()
             nest.SetStatus([node], {'x': x, 'y': y, 'weight': input_weight})

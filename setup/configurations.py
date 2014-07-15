@@ -66,13 +66,13 @@ INPUT_NEURON = NeuronSetup(**{
 
 
 IMAGE_SEQUENCE_GENERATOR = ImageSequenceGeneratorSetup(**{
-    'movie_path': 'data/gauss20x20.idlmov',
-    'stimuli_duration': 20.0,
-    'stimuli_per_object': 5,
-    'nx': 20,
-    'ny': 20,
-    'pre_ISI': 2.0,
-    'post_ISI': 2.5,
+    'movie_path': 'data/5x5gklearn.idlmov',
+    'stimuli_duration': 20.,
+    'stimuli_per_object': 20,
+    'nx': 5,
+    'ny': 5,
+    'pre_ISI': .25,
+    'post_ISI': 20.,
     'type': 'xysequence',
     'stim_direction': 'x_continuous'
 })
