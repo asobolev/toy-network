@@ -25,12 +25,12 @@ class NeuronSetup(tuple_NeuronSetup):
         }
 
 
-tuple_ImageSequenceGeneratorSetup = namedtuple(
-    'tuple_ImageSequenceGeneratorSetup',
+tuple_ISGSequenceSetup = namedtuple(
+    'tuple_ISGSequenceSetup',
     ['movie_path', 'stimuli_duration', 'stimuli_per_object', 'nx', 'ny',
-     'pre_ISI', 'post_ISI', 'type', 'stim_direction']
+     'pre_ISI', 'post_ISI', 'stim_direction']
 )
-class ImageSequenceGeneratorSetup(tuple_ImageSequenceGeneratorSetup):
+class ISGSequenceSetup(tuple_ISGSequenceSetup):
 
     @property
     def _player_parameters(self):
@@ -47,7 +47,36 @@ class ImageSequenceGeneratorSetup(tuple_ImageSequenceGeneratorSetup):
     @property
     def _player(self):
         return {
-            'type': self.type,
+            'type': 'xysequence',
+            'parameter': self._player_parameters
+        }
+
+    @property
+    def as_dict(self):
+        return {
+            'filename': self.movie_path,
+            'player': self._player
+        }
+
+
+
+tuple_ISGStraightSetup = namedtuple(
+    'tuple_ISGStraightSetup',
+    ['movie_path', 'stimuli_duration', 'pre_ISI']
+)
+class ISGStraightSetup(tuple_ISGStraightSetup):
+
+    @property
+    def _player_parameters(self):
+        return {
+            'stimulus_interval': self.stimuli_duration,
+            'inter_stimulus_interval': self.pre_ISI
+        }
+
+    @property
+    def _player(self):
+        return {
+            'type': 'straight',
             'parameter': self._player_parameters
         }
 

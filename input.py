@@ -2,19 +2,22 @@ import itertools
 import nest
 import nest.topology as tp
 
+from setup.models import ISGSequenceSetup
+
 
 def image_sequence_generator_showcase():
 
     pre_ISI = 2.0
     post_ISI = 2.5
     stimuli_duration = 20.0
-    stimuli_per_object = 5
-    nx = 20
-    ny = 20
+    stimuli_per_object = 20
+    nx = 5  # 20
+    ny = 5  # 20
     single_stim_time = stimuli_duration + pre_ISI
 
-    ISG_config = ImageSequenceGeneratorSetup(
-        INPUT_MOVIE, stimuli_duration, stimuli_per_object, nx, ny
+    ISG_config = ISGSequenceSetup(
+        'data/5x5gklearn0.idlmov', stimuli_duration, stimuli_per_object, nx, ny,
+        pre_ISI, post_ISI, 'xysequence', 'x_continuous'
     )
 
     nest.ResetKernel()
@@ -22,10 +25,12 @@ def image_sequence_generator_showcase():
 
     nest.Simulate(0.5 * single_stim_time)
 
+    import ipdb
+    ipdb.set_trace()
+
     for i in range(stimuli_per_object):
         frame_num = nest.GetStatus(img_seq, 'current_frame_num')[0]
         nest.Simulate(single_stim_time)
-
 
 
 class InputLayer(object):

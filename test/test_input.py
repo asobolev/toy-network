@@ -1,6 +1,6 @@
 import unittest
 import nest
-import nest.raster_plot as raster_plot
+from nest import raster_plot, voltage_trace
 import reduced.setup.configurations as CONF
 from reduced.input import InputLayer
 
@@ -12,13 +12,27 @@ class TestInputLayer(unittest.TestCase):
 
     def test_first_configuration(self):
         self.input_layer = InputLayer(
-            200.8, CONF.IMAGE_SEQUENCE_GENERATOR, CONF.INPUT_NEURON
+            200.8, CONF.IMAGE_SEQUENCE_GENERATOR_5X5, CONF.INPUT_NEURON
         )
 
+        voltmeter = nest.Create("voltmeter")
+        nest.SetStatus(voltmeter, [{"withtime": True}])
+        nest.Connect(voltmeter, [self.input_layer.nodes[15]])
+
+        # simulation
         nest.Simulate(2000)
 
-        raster_plot.from_device(self.input_layer.spikes)
-        raster_plot.show()
+        # analysis
+        nest.GetStatus(voltmeter, 'events')
+
+        import ipdb
+        ipdb.set_trace()
+
+        voltage_trace.from_device(voltmeter)
+        voltage_trace.show()
+
+        #raster_plot.from_device(self.input_layer.spikes)
+        #raster_plot.show()
 
     def tearDown(self):
         pass
