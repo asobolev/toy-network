@@ -1,8 +1,11 @@
 import unittest
 import nest
-from nest import raster_plot, voltage_trace
+import numpy as np
 import reduced.setup.configurations as CONF
+import matplotlib.pyplot as plt
+
 from reduced.input import InputLayer
+from reduced.plot import multiple_time_series
 
 
 class TestInputLayer(unittest.TestCase):
@@ -15,21 +18,25 @@ class TestInputLayer(unittest.TestCase):
             200.8, CONF.IMAGE_SEQUENCE_GENERATOR_5X5, CONF.INPUT_NEURON
         )
 
-        voltmeter = nest.Create("voltmeter")
-        nest.SetStatus(voltmeter, [{"withtime": True}])
-        nest.Connect(voltmeter, [self.input_layer.nodes[15]])
+        monitors = []
+        rec_params = {'record_from': ['V_m'], 'withtime': True}
+        for node_id in self.input_layer.nodes:
+            voltmeter = nest.Create('multimeter', params=rec_params)
+            nest.Connect(voltmeter, [node_id])
+            monitors.append(voltmeter[0])
 
         # simulation
         nest.Simulate(2000)
 
         # analysis
-        nest.GetStatus(voltmeter, 'events')
+        output = []
+        for node_id in monitors:
+            output.append(nest.GetStatus([node_id], 'events')[0])
 
-        import ipdb
-        ipdb.set_trace()
+        events = np.array([event['V_m'] for event in output])
+        fig = multiple_time_series(events, output[0]['times'])
 
-        voltage_trace.from_device(voltmeter)
-        voltage_trace.show()
+        plt.show()
 
         #raster_plot.from_device(self.input_layer.spikes)
         #raster_plot.show()
