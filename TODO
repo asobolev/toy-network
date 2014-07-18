@@ -12,3 +12,5 @@
 - usually the return value is a list even if a single object was
     created/updated. Same with single input parameters. WTF?
 - the permanent use of a global state is a killer..
+- model customization is implemented as a "copy" function instead of
+    inheritance, which is a great limit comparing to OOP

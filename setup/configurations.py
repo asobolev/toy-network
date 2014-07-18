@@ -67,6 +67,6 @@ INPUT_NEURON = NeuronSetup(**{
 
 IMAGE_SEQUENCE_GENERATOR_5X5 = ISGStraightSetup(**{
     'movie_path': 'data/5x5gklearn0.idlmov',
-    'stimuli_duration': 30.,
-    'pre_ISI': 20.
+    'stimuli_duration': 20.,
+    'pre_ISI': 200.
 })

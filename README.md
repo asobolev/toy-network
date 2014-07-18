@@ -8,7 +8,7 @@ builds a network with two layers:
 4. modifiable connections from input layer to layer 2 (e.g. any synapse model
 with "stdp" in its name)
 
-tries to make the network learn to differentiyte the four stimuli, such,
+tries to make the network learn to differentiate the four stimuli, such,
 that from the spike output of layer 2 you can tell, which stimulus was active.
 
 You will need to add more components to the network, to make it work. E.g.

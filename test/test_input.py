@@ -15,7 +15,7 @@ class TestInputLayer(unittest.TestCase):
 
     def test_first_configuration(self):
         self.input_layer = InputLayer(
-            200.8, CONF.IMAGE_SEQUENCE_GENERATOR_5X5, CONF.INPUT_NEURON
+            20., CONF.IMAGE_SEQUENCE_GENERATOR_5X5, CONF.INPUT_NEURON
         )
 
         monitors = []
@@ -26,7 +26,7 @@ class TestInputLayer(unittest.TestCase):
             monitors.append(voltmeter[0])
 
         # simulation
-        nest.Simulate(2000)
+        nest.Simulate(10000)
 
         # analysis
         output = []
