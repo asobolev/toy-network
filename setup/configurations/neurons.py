@@ -1,9 +1,10 @@
-from models import *
+from reduced.setup.models import *
 
 
-IAF_COND_DIFF_EXP = NeuronSetup(**{
-    'model': 'iaf_cond_diffexp_ang',
-    'para_dict': {
+class ExcitatoryNeuron(NeuronSetup):
+
+    model = 'iaf_cond_diffexp_ang'
+    para_dict = {
         'V_th': -50.0,
         'V_reset': -55.0,
         't_ref': 1.0,
@@ -21,16 +22,16 @@ IAF_COND_DIFF_EXP = NeuronSetup(**{
         'tau_GABA_fall': 7.0,
         'tau_NMDA_rise': 5.5,
         'tau_NMDA_fall': 100.,
-    },
-    'lat_ex_input_ports': [1],  # NMDA-AMPA input
-    'noise_firing_rate': 50000.,
-    'noise_amplitude': 0.05275  # in objsim: 0.05294 to get 3 Hz background noise
-})
+    }
+    lat_ex_input_ports = [1]  # NMDA-AMPA input
+    noise_firing_rate = 50000.
+    noise_amplitude = 0.05275  # in objsim: 0.05294 to get 3 Hz background noise
 
 
-INHIBITORY_NEURON = NeuronSetup(**{
-    'model': 'iaf_cond_diffexp_ang',
-    'para_dict': {
+class InhibitoryNeuron(NeuronSetup):
+
+    model = 'iaf_cond_diffexp_ang'
+    para_dict = {
         'V_th': -50.0,
         'V_reset': -55.0,
         't_ref': 1.0,
@@ -49,24 +50,16 @@ INHIBITORY_NEURON = NeuronSetup(**{
         'tau_NMDA_rise': 5.5,
         'tau_NMDA_fall': 100.,
         'const_GABA_input': 4.62,  # to reduce background noise to 3 Hz
-    },
-    'lat_ex_input_ports': [1],  # NMDA-AMPA input
-    'noise_firing_rate': 50000.,
-    'noise_amplitude': 0.0504967   # to get 100 Hz background noise
-})
+    }
+    lat_ex_input_ports = [1]  # NMDA-AMPA input
+    noise_firing_rate = 50000.
+    noise_amplitude = 0.0504967   # to get 100 Hz background noise
 
 
-INPUT_NEURON = NeuronSetup(**{
-    'model': 'pixel_iaf_psc_exp',
-    'para_dict': {},
-    'lat_ex_input_ports': [],
-    'noise_firing_rate': 12000.,
-    'noise_amplitude': 13.9  # 3 Hz background noise
-})
+class InputNeuron(NeuronSetup):
 
-
-IMAGE_SEQUENCE_GENERATOR_5X5 = ISGStraightSetup(**{
-    'movie_path': 'data/5x5gklearn0.idlmov',
-    'stimuli_duration': 20.,
-    'pre_ISI': 200.
-})
+    model = 'pixel_iaf_psc_exp'
+    para_dict = {}
+    lat_ex_input_ports = []
+    noise_firing_rate = 12000.
+    noise_amplitude = 13.9  # 3 Hz background noise

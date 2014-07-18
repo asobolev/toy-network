@@ -29,7 +29,9 @@ class InputLayer(object):
         self._nest_nodes = nest.GetNodes(self._nest_layer)[0]
         nest.SetStatus(self._nest_nodes, {"V_m": 0.})
 
-        self._movie = nest.Create('image_sequence_generator', 1, ISG_setup.as_dict)
+        self._movie = nest.Create(
+            'image_sequence_generator', 1, ISG_setup.as_nest_dict
+        )
 
         nodes = iter(self._nest_nodes)
         for x, y in itertools.product(range(x_dim), range(y_dim)):

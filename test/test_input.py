@@ -1,9 +1,10 @@
 import unittest
 import nest
 import numpy as np
-import reduced.setup.configurations as CONF
+import configurations as conf
 import matplotlib.pyplot as plt
 
+from nest import raster_plot
 from reduced.input import InputLayer
 from reduced.plot import multiple_time_series
 
@@ -15,7 +16,7 @@ class TestInputLayer(unittest.TestCase):
 
     def test_first_configuration(self):
         self.input_layer = InputLayer(
-            20., CONF.IMAGE_SEQUENCE_GENERATOR_5X5, CONF.INPUT_NEURON
+            2000., conf.INPUT['GKLEARN_5X5_0'], conf.NEURONS['INPUT_NEURON']
         )
 
         monitors = []
@@ -26,7 +27,7 @@ class TestInputLayer(unittest.TestCase):
             monitors.append(voltmeter[0])
 
         # simulation
-        nest.Simulate(10000)
+        nest.Simulate(2000)
 
         # analysis
         output = []
@@ -34,12 +35,12 @@ class TestInputLayer(unittest.TestCase):
             output.append(nest.GetStatus([node_id], 'events')[0])
 
         events = np.array([event['V_m'] for event in output])
-        fig = multiple_time_series(events, output[0]['times'])
+        #fig = multiple_time_series(events, output[0]['times'])
 
-        plt.show()
+        #plt.show()
 
-        #raster_plot.from_device(self.input_layer.spikes)
-        #raster_plot.show()
+        raster_plot.from_device(self.input_layer.spikes)
+        raster_plot.show()
 
     def tearDown(self):
         pass
