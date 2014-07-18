@@ -2,11 +2,8 @@ import unittest
 import nest
 import numpy as np
 import configurations as conf
-import matplotlib.pyplot as plt
 
-from nest import raster_plot
 from reduced.input import InputLayer
-from reduced.plot import multiple_time_series
 
 
 class TestInputLayer(unittest.TestCase):
@@ -14,33 +11,27 @@ class TestInputLayer(unittest.TestCase):
     def setUp(self):
         nest.ResetKernel()
 
-    def test_first_configuration(self):
-        self.input_layer = InputLayer(
-            2000., conf.INPUT['GKLEARN_5X5_0'], conf.NEURONS['INPUT_NEURON']
-        )
+    def test_spiking(self):
+        conf_dict = {
+            'input_weight': 2000.,
+            'ISG_setup': conf.INPUT['GKLEARN_5X5_0'],
+            'neuron_setup': conf.NEURONS['INPUT_NEURON'],
+            'x_dim': 5,
+            'y_dim': 5
+        }
+        self.input_layer = InputLayer(**conf_dict)
 
-        monitors = []
-        rec_params = {'record_from': ['V_m'], 'withtime': True}
-        for node_id in self.input_layer.nodes:
-            voltmeter = nest.Create('multimeter', params=rec_params)
-            nest.Connect(voltmeter, [node_id])
-            monitors.append(voltmeter[0])
-
-        # simulation
         nest.Simulate(2000)
 
-        # analysis
-        output = []
-        for node_id in monitors:
-            output.append(nest.GetStatus([node_id], 'events')[0])
+        events = nest.GetStatus(self.input_layer.spikes, 'events')[0]
+        senders = events['senders']
 
-        events = np.array([event['V_m'] for event in output])
-        #fig = multiple_time_series(events, output[0]['times'])
+        has_spikes = lambda node_id: np.sum(senders == node_id) > 2
+        spiking_nodes = [x for x in self.input_layer.nodes if has_spikes(x)]
+        silent_nodes = [x for x in self.input_layer.nodes if not has_spikes(x)]
 
-        #plt.show()
-
-        raster_plot.from_device(self.input_layer.spikes)
-        raster_plot.show()
+        assert(len(spiking_nodes) == 20)
+        assert(len(silent_nodes) == 5)
 
     def tearDown(self):
         pass
