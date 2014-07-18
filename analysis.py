@@ -1,10 +1,11 @@
-import matplotlib.pyplot as plt
-import test.configurations as conf
-import nest
 import numpy as np
 
+import matplotlib.pyplot as plt
+import nest
 from nest import raster_plot
-from reduced.input import InputLayer
+
+import test.configurations as conf
+from network.layer import InputLayer
 from reduced.plot import multiple_time_series
 
 

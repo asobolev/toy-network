@@ -1,9 +1,10 @@
 import unittest
-import nest
 import numpy as np
-import configurations as conf
 
-from reduced.input import InputLayer
+import nest
+
+import configurations as conf
+from network.layer import InputLayer
 
 
 class TestInputLayer(unittest.TestCase):

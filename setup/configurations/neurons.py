@@ -28,6 +28,20 @@ class ExcitatoryNeuron(NeuronSetup):
     noise_amplitude = 0.05275  # in objsim: 0.05294 to get 3 Hz background noise
 
 
+class MapNeuron(NeuronSetup):
+
+    model = 'iaf_psc_alpha'
+    para_dict = {
+        'C_m': 1.0,
+        'tau_m': 20.9,
+        't_ref': 2.0,
+        'E_L': 0.0,
+        'V_th': 20.,
+        'V_reset': 10.
+    }
+    lat_ex_input_ports = [0]
+
+
 class InhibitoryNeuron(NeuronSetup):
 
     model = 'iaf_cond_diffexp_ang'
