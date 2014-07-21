@@ -14,3 +14,9 @@
 - the permanent use of a global state is a killer..
 - model customization is implemented as a "copy" function instead of
     inheritance, which is a great limit comparing to OOP
+
+
+
+# simulation configuration management
+
+- pypet - in development + hardly uses global state

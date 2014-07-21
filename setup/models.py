@@ -101,3 +101,51 @@ class ISGSequenceSetup(SetupBase):
                 }
             }
         }
+
+
+class ConnectionSetup(SetupBase):
+
+    synapse_model = None
+    connection_type = None
+    mask = None
+    weights = None
+
+    @property
+    def is_valid(self):
+        not_none = lambda x, y: x and (getattr(self, y) is not None)
+        return reduce(not_none, ['synapse_model', 'connection_type', 'weights'], True)
+
+    @property
+    def as_nest_dict(self):
+        return {
+            'synapse_model': self.synapse_model,
+            'connection_type': self.connection_type,
+            'mask': self.mask,
+            'weights': self.weights
+        }
+
+
+class SynapseSetup(SetupBase):
+
+    alpha = None
+    lambda_ = None
+    weight = None
+    norm_freq = None
+    norm_fac1 = None
+    norm_fac0 = None
+
+    @property
+    def is_valid(self):
+        not_none = lambda x, y: x and (getattr(self, y) is not None)
+        return reduce(not_none, ['alpha', 'lambda_', 'weight'], True)
+
+    @property
+    def as_nest_dict(self):
+        return {
+            'alpha': self.alpha,
+            'lambda': self.lambda_,
+            'weight': self.weight,
+            'norm_freq': self.norm_freq,
+            'norm_fac1': self.norm_fac1,
+            'norm_fac0': self.norm_fac0,
+        }
