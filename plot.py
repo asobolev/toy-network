@@ -32,14 +32,18 @@ def multiple_time_series(events, times):
     ax.set_yticks(np.arange(num_rows) * dr)
     ax.set_yticklabels(["N%s" % str(x) for x in range(num_rows)])
 
-    ax.set_xlabel('time (s)')
-    ax.set_ylabel('events (N) with diff %f' % dr)
+    ax.set_xlabel('time (ms)')
+    ax.set_ylabel('events (N) with diff %f (ms)' % dr)
 
     return fig
 
 
 def weight_matrix(weights):
+    """
+    Creates an matrix image with colorbar for a given 2D weight matrix.
 
+    :param weights: 2D matrix with float32 values between 0.0 and 1.0
+    """
     fig = figure(figsize=(15, 10))
     ax = fig.add_subplot(111)
 

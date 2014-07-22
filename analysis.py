@@ -8,7 +8,7 @@ import setup.configurations as base_conf
 from nest import raster_plot
 from network.layer import InputLayer, MapLayer
 from network.connection import ConnectionPool
-from reduced.plot import multiple_time_series
+from reduced.plot import multiple_time_series, weight_matrix
 
 
 def analyse():
@@ -32,7 +32,7 @@ def analyse():
         monitors.append(voltmeter[0])
     
     # simulation
-    nest.Simulate(2000)
+    nest.Simulate(100000)
     
     # analysis
     output = []
@@ -44,6 +44,11 @@ def analyse():
 
     #raster_plot.from_device([input_layer.spikes])
     #raster_plot.from_device([map_layer.spikes])
+
+    fig = weight_matrix(conn_pool.weights_normalized)
+
+    import ipdb
+    ipdb.set_trace()
 
     plt.show()
 
