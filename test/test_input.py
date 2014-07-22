@@ -24,7 +24,7 @@ class TestInputLayer(unittest.TestCase):
 
         nest.Simulate(2000)
 
-        events = nest.GetStatus(self.input_layer.spikes, 'events')[0]
+        events = nest.GetStatus([self.input_layer.spikes], 'events')[0]
         senders = events['senders']
 
         has_spikes = lambda node_id: np.sum(senders == node_id) > 2

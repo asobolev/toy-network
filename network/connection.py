@@ -1,3 +1,4 @@
+import numpy as np
 import nest
 import nest.topology as tp
 
@@ -19,11 +20,7 @@ class ConnectionPool(object):
         self.target = target
         self.initial_weights = initial_weights
 
-        import ipdb
-        ipdb.set_trace()
-
-        # TODO check if this returns IDs
-        tp.ConnectLayers(source, target, conn_setup.as_nest_dict)
+        tp.ConnectLayers([source.id], [target.id], conn_setup.as_nest_dict)
 
         self.nodes = nest.GetConnections(source.nodes, target.nodes)
         if initial_weights:

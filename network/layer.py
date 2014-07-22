@@ -15,22 +15,22 @@ class Layer(object):
         :param x_dim:           number of neurons in X-dimension
         :param y_dim:           number of neurons in Y-dimension
         """
-        self._nest_layer = tp.CreateLayer({
+        self._layer_id = tp.CreateLayer({
             'rows': x_dim,
             'columns': y_dim,
             'elements': neuron_setup.model,
             'edge_wrap': True
-        })
+        })[0]
 
-        self._nest_nodes = nest.GetNodes(self._nest_layer)[0]
+        self._nest_nodes = nest.GetNodes([self._layer_id])[0]
         nest.SetStatus(self._nest_nodes, {"V_m": 0.})
 
-        self._spikes = nest.Create('spike_detector', 1, [{'label': 'input_spikes'}])
-        nest.ConvergentConnect(self._nest_nodes, self._spikes)
+        self._spikes = nest.Create('spike_detector', 1, [{'label': 'input_spikes'}])[0]
+        nest.ConvergentConnect(self._nest_nodes, [self._spikes])
 
     @property
-    def layer(self):
-        return self._nest_layer
+    def id(self):
+        return self._layer_id
 
     @property
     def nodes(self):
@@ -41,7 +41,7 @@ class Layer(object):
         return self._spikes
 
     def clear_spike_detector(self):
-        nest.SetStatus(self._spikes, 'n_events', 0)
+        nest.SetStatus([self._spikes], 'n_events', 0)
 
 
 class InputLayer(Layer):
@@ -62,13 +62,13 @@ class InputLayer(Layer):
 
         self._movie = nest.Create(
             'image_sequence_generator', 1, ISG_setup.as_nest_dict
-        )
+        )[0]
 
         nodes = iter(self._nest_nodes)
         for x, y in itertools.product(range(x_dim), range(y_dim)):
             node = nodes.next()
             nest.SetStatus([node], {'x': x, 'y': y, 'weight': input_weight})
-            nest.Connect(self._movie, [node])
+            nest.Connect([self._movie], [node])
 
 
 class MapLayer(Layer):

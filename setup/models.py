@@ -113,16 +113,19 @@ class ConnectionSetup(SetupBase):
     @property
     def is_valid(self):
         not_none = lambda x, y: x and (getattr(self, y) is not None)
-        return reduce(not_none, ['synapse_model', 'connection_type', 'weights'], True)
+        return reduce(not_none, ['synapse_model', 'connection_type'], True)
 
     @property
     def as_nest_dict(self):
-        return {
+        result = {
             'synapse_model': self.synapse_model,
-            'connection_type': self.connection_type,
-            'mask': self.mask,
-            'weights': self.weights
+            'connection_type': self.connection_type
         }
+        if self.mask is not None:
+            result['mask'] = self.mask
+        if self.weights is not None:
+            result['weights'] = self.weights
+        return result
 
 
 class SynapseSetup(SetupBase):

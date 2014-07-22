@@ -5,12 +5,12 @@ class MapNeuron(NeuronSetup):
 
     model = 'iaf_psc_alpha'
     para_dict = {
+        'E_L': -65.,
         'C_m': 1.0,
         'tau_m': 20.9,
         't_ref': 2.0,
-        'E_L': 0.0,
-        'V_th': 20.,
-        'V_reset': 10.
+        'V_th': -50.,
+        'V_reset': -55.
     }
     lat_ex_input_ports = [0]
 

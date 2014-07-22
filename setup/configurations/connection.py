@@ -20,6 +20,7 @@ class ForwardPlasticConnection(ConnectionSetup):
 
     synapse_model = 'stdp_pl_norm_synapse_hom'
     connection_type = 'convergent'
+    weights = {'uniform': {'min': 1., 'max': 200.}}
 
 
 class PlasticSynapse(SynapseSetup):

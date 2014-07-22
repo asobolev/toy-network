@@ -13,7 +13,7 @@ def multiple_time_series(events, times):
     """
     num_rows = len(events)
 
-    fig = figure(figsize=(15,10))
+    fig = figure(figsize=(15, 10))
     ax = fig.add_subplot(111)
 
     # limits of the x axis
@@ -33,6 +33,17 @@ def multiple_time_series(events, times):
     ax.set_yticklabels(["N%s" % str(x) for x in range(num_rows)])
 
     ax.set_xlabel('time (s)')
-    ax.set_ylabel('events (N)')
+    ax.set_ylabel('events (N) with diff %f' % dr)
+
+    return fig
+
+
+def weight_matrix(weights):
+
+    fig = figure(figsize=(15, 10))
+    ax = fig.add_subplot(111)
+
+    im = ax.imshow(weights, interpolation='nearest', origin='lower')
+    fig.colorbar(im)
 
     return fig
