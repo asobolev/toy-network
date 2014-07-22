@@ -4,6 +4,8 @@ from reduced.setup.models import *
 
 class ISGStraightGaussKernel(ISGStraightSetup):
 
-    movie_path = 'data/5x5gklearn0.idlmov'
     stimuli_duration = 20.
     i_s_i = 200.
+
+    def __init__(self, movie_path):
+        self.movie_path = movie_path

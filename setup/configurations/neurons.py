@@ -1,6 +1,29 @@
 from reduced.setup.models import *
 
 
+class MapNeuron(NeuronSetup):
+
+    model = 'iaf_psc_alpha'
+    para_dict = {
+        'C_m': 1.0,
+        'tau_m': 20.9,
+        't_ref': 2.0,
+        'E_L': 0.0,
+        'V_th': 20.,
+        'V_reset': 10.
+    }
+    lat_ex_input_ports = [0]
+
+
+class InputNeuron(NeuronSetup):
+
+    model = 'pixel_iaf_psc_exp'
+    para_dict = {}
+    lat_ex_input_ports = []
+    noise_firing_rate = 12000.
+    noise_amplitude = 13.9  # 3 Hz background noise
+
+
 class ExcitatoryNeuron(NeuronSetup):
 
     model = 'iaf_cond_diffexp_ang'
@@ -22,24 +45,10 @@ class ExcitatoryNeuron(NeuronSetup):
         'tau_GABA_fall': 7.0,
         'tau_NMDA_rise': 5.5,
         'tau_NMDA_fall': 100.,
-    }
+        }
     lat_ex_input_ports = [1]  # NMDA-AMPA input
     noise_firing_rate = 50000.
     noise_amplitude = 0.05275  # in objsim: 0.05294 to get 3 Hz background noise
-
-
-class MapNeuron(NeuronSetup):
-
-    model = 'iaf_psc_alpha'
-    para_dict = {
-        'C_m': 1.0,
-        'tau_m': 20.9,
-        't_ref': 2.0,
-        'E_L': 0.0,
-        'V_th': 20.,
-        'V_reset': 10.
-    }
-    lat_ex_input_ports = [0]
 
 
 class InhibitoryNeuron(NeuronSetup):
@@ -68,12 +77,3 @@ class InhibitoryNeuron(NeuronSetup):
     lat_ex_input_ports = [1]  # NMDA-AMPA input
     noise_firing_rate = 50000.
     noise_amplitude = 0.0504967   # to get 100 Hz background noise
-
-
-class InputNeuron(NeuronSetup):
-
-    model = 'pixel_iaf_psc_exp'
-    para_dict = {}
-    lat_ex_input_ports = []
-    noise_firing_rate = 12000.
-    noise_amplitude = 13.9  # 3 Hz background noise

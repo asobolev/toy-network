@@ -1,11 +1,12 @@
 import numpy as np
 
-import matplotlib.pyplot as plt
 import nest
-from nest import raster_plot
-
+import matplotlib.pyplot as plt
 import test.configurations as conf
-from network.layer import InputLayer
+import setup.configurations as base_conf
+
+from nest import raster_plot
+from network.layer import InputLayer, MapLayer
 from reduced.plot import multiple_time_series
 
 
@@ -13,7 +14,10 @@ def analyse():
     input_layer = InputLayer(
         2000., conf.INPUT['GKLEARN_5X5_0'], conf.NEURONS['INPUT_NEURON']
     )
-    
+
+    map_layer = MapLayer(base_conf.MapNeuron())
+
+
     monitors = []
     rec_params = {'record_from': ['V_m'], 'withtime': True}
     for node_id in input_layer.nodes:
