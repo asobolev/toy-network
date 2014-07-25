@@ -6,6 +6,7 @@ import nest.topology as tp
 class ConnectionPool(object):
     """
     A base class for connections between two layers of neurons.
+    Simple all-to-all connection between given layers.
 
     Weights are immutable in this class.
     """

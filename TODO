@@ -8,6 +8,8 @@
     whatever in there
 - all parameters are just nested dicts (hey, why do we have OOP?) why don't we
     write a single function called run() and pass all parameters as dict there?
+    It's insanely hard to find the right parameter dicts and understand what
+    do they mean
 - all functions return IDs not objects (insane!) how do I control staff?!
 - usually the return value is a list even if a single object was
     created/updated. Same with single input parameters. WTF?
