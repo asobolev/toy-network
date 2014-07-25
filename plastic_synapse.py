@@ -1,34 +1,40 @@
 import nest
-import nest.voltage_trace
-
-import reduced.setup.configurations as conf
-
-nest.ResetKernel()
+from nest import voltage_trace
 
 
-input_neuron = nest.Create("iaf_neuron")
-nest.SetStatus(neuron,[{"V_peak": 0.0, "a": 4.0, "b":80.5}])
 
-output_neuron = nest.Create("iaf_neuron")
-nest.SetStatus(neuron,[{"V_peak": 0.0, "a": 4.0, "b":80.5}])
+def execute():
+    nest.ResetKernel()
 
-nest.Connect(input_neuron, output_neuron, model='stdp_pl_norm_synapse_hom')
+    # single input neuron
+    input_neuron = nest.Create("iaf_psc_alpha")
+
+    # single output neuron
+    output_neuron = nest.Create("iaf_psc_alpha")
+
+    # plastic connection
+    nest.Connect(input_neuron, output_neuron, model='stdp_pl_norm_synapse_hom')
+
+    # voltmeter
+    rec_params = {'record_from': ['V_m'], 'withtime': True}
+    voltmeter = nest.Create('multimeter', params=rec_params)
+    nest.Connect(voltmeter, input_neuron)
+
+    for t in range(10):  # 10 seconds in total
+        dc = nest.Create("dc_generator")
+        nest.SetStatus(dc, [{
+            "amplitude": 100.0,
+            "start": t*1000.0 + 200.0,
+            "stop": t*1000.0 + 500.0
+        }])
+
+        nest.ConvergentConnect(dc, input_neuron)
+
+        nest.Simulate(1000.0)
+
+    voltage_trace.from_device(voltmeter)
+    voltage_trace.show()
 
 
-for t in range(10):
-    dc=nest.Create("dc_generator",2)
-
-    nest.SetStatus(dc,[{"amplitude":500.0, 
-                        "start":0.0, 
-                        "stop":200.0},
-                       {"amplitude":800.0,
-                        "start":500.0,
-                        "stop":1000.0}])
-
-    nest.ConvergentConnect(dc,neuron)
-
-    voltmeter= nest.Create("voltmeter")
-    nest.SetStatus(voltmeter,[{"to_file": True, "withtime": True}])
-    nest.Connect(voltmeter,neuron)
-
-    nest.Simulate(1000.0)
+if __name__ == '__main__':
+    execute()
