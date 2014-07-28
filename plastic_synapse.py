@@ -33,6 +33,9 @@ def execute():
     nest.Connect(input_neuron, output_neuron, **kwargs)
     connection = nest.GetConnections(input_neuron, output_neuron)
 
+    import ipdb
+    ipdb.set_trace()
+
     # voltmeters setup
     monitors = []
     rec_params = {'record_from': ['V_m'], 'withtime': True}
@@ -45,7 +48,7 @@ def execute():
     scales = []
     for t in range(10):  # 10 seconds in total
         state = nest.GetStatus(connection)[0]
-        scales.append(state['weight'])
+        scales.append(state)
 
         dc = nest.Create("dc_generator")
         nest.SetStatus(dc, [{
