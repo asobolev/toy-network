@@ -8,17 +8,26 @@ from plot import *
 def execute():
     nest.ResetKernel()
 
+    neuron_params = {
+        'E_L': -65.,
+        'C_m': 1.0,
+        'tau_m': 20.9,
+        't_ref': 2.0,
+        'V_th': -50.,
+        'V_reset': -55.
+    }
+
     # single input neuron
-    input_neuron = nest.Create("iaf_psc_alpha")
+    input_neuron = nest.Create("iaf_psc_alpha", params=neuron_params)
 
     # single output neuron
-    output_neuron = nest.Create("iaf_psc_alpha")
+    output_neuron = nest.Create("iaf_psc_alpha", params=neuron_params)
 
     # plastic connection
     nest.CopyModel('stdp_synapse_hom', 'plastic', {'alpha': 0.1, 'Wmax': 1000.})
 
     kwargs = {
-        'params': {'weight': 250.},
+        'params': {'weight': 200.},
         'model': 'plastic',  #'stdp_pl_norm_synapse_hom'
     }
     nest.Connect(input_neuron, output_neuron, **kwargs)
@@ -36,13 +45,13 @@ def execute():
     scales = []
     for t in range(10):  # 10 seconds in total
         state = nest.GetStatus(connection)[0]
-        scales.append(state)
+        scales.append(state['weight'])
 
         dc = nest.Create("dc_generator")
         nest.SetStatus(dc, [{
-            "amplitude": 700.0,
+            "amplitude": 10.0 if t < 2 else 1.0,
             "start": t*1000.0 + 200.0,
-            "stop": t*1000.0 + 800.0
+            "stop": t*1000.0 + 220.0
         }])
 
         nest.ConvergentConnect(dc, input_neuron)
