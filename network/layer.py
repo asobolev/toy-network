@@ -2,8 +2,11 @@ import itertools
 import nest
 import nest.topology as tp
 
+from base import NestObject
+from node import Neuron
 
-class Layer(object):
+
+class Layer(NestObject):
 
     def __init__(self, neuron_setup, x_dim=5, y_dim=5):
         """
@@ -15,26 +18,66 @@ class Layer(object):
         :param x_dim:           number of neurons in X-dimension
         :param y_dim:           number of neurons in Y-dimension
         """
-        self._layer_id = tp.CreateLayer({
+        self._x_dim = x_dim
+        self._y_dim = y_dim
+
+        nest_id = tp.CreateLayer({
             'rows': x_dim,
             'columns': y_dim,
             'elements': neuron_setup.model,
             'edge_wrap': True
         })[0]
+        super(Layer, self).__init__(nest_id)
 
-        self._nest_nodes = nest.GetNodes([self._layer_id])[0]
-        nest.SetStatus(self._nest_nodes, {"V_m": 0.})
+        node_ids = nest.GetNodes([self._nest_id])[0]
+        self._neurons = [Neuron(nid) for nid in node_ids]
 
         self._spikes = nest.Create('spike_detector', 1, [{'label': 'input_spikes'}])[0]
-        nest.ConvergentConnect(self._nest_nodes, [self._spikes])
+        nest.ConvergentConnect(self.nodes, [self._spikes])
+
+    # methods to access neurons of a layer as a list
+
+    def __len__(self):
+        return len(self._neurons)
+
+    def __getitem__(self, key):
+        return self._neurons[key]
+
+    def __iter__(self):
+        for i in range(0, len(self)):
+            yield self.__getitem__(i)
+
+    def __delitem__(self, key):
+        raise NotImplementedError()
+
+    def __str__(self):
+        return str((list(self)))
+
+    def __repr__(self):
+        return str(self)
+
+    # 2D access interface
 
     @property
-    def id(self):
-        return self._layer_id
+    def as_matrix(self):
+        """
+        Returns a 2D list with related neuron objects. Makes it easier to access
+        element by (x, y) coordinate, like
+
+        Layer[x][y]
+
+        :return:    2D list of related Neuron objects
+        """
+        start_indices = [self._y_dim*i for i in range(self._x_dim)]
+        return [self[i:i + self._y_dim] for i in start_indices]
+
+    # helper methods
 
     @property
     def nodes(self):
-        return self._nest_nodes
+        return [x.id for x in self._neurons]
+
+    # spike detector interface
 
     @property
     def spikes(self):
@@ -64,7 +107,7 @@ class InputLayer(Layer):
             'image_sequence_generator', 1, ISG_setup.as_nest_dict
         )[0]
 
-        nodes = iter(self._nest_nodes)
+        nodes = iter(self.nodes)
         for x, y in itertools.product(range(x_dim), range(y_dim)):
             node = nodes.next()
             nest.SetStatus([node], {'x': x, 'y': y, 'weight': input_weight})

@@ -31,7 +31,7 @@ class ConnectionPool(object):
             nest.SetStatus(self._nodes, 'weight', initial_weights)
 
     def __len__(self):
-        return len(self._source.nodes)
+        return len(self._source)
 
     def __getitem__(self, key):
         """
@@ -43,7 +43,7 @@ class ConnectionPool(object):
         :param key: index of the source layer node
         :return:    array of connections [(target-gid, weight), ...]
         """
-        node_id = self._source.nodes[key]
+        node_id = self._source[key].id
         nodes = filter(lambda x: x[0] == node_id, self._nodes)
 
         states = nest.GetStatus(nodes)

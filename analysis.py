@@ -23,6 +23,9 @@ def analyse():
     conn_setup = base_conf.ForwardPlasticConnection()
     conn_pool = ConnectionPool(input_layer, map_layer, conn_setup)
 
+    import ipdb
+    ipdb.set_trace()
+
     # monitors setup
     monitors = []
     rec_params = {'record_from': ['V_m'], 'withtime': True}
@@ -46,9 +49,6 @@ def analyse():
     #raster_plot.from_device([map_layer.spikes])
 
     fig = weight_matrix(conn_pool.weights_normalized)
-
-    import ipdb
-    ipdb.set_trace()
 
     plt.show()
 
