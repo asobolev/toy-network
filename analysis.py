@@ -7,7 +7,6 @@ import setup.configurations as base_conf
 
 from nest import raster_plot
 from network.layer import InputLayer, MapLayer
-from network.connection import ConnectionPool
 from reduced.plot import multiple_time_series, weight_matrix
 
 
