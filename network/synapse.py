@@ -4,7 +4,7 @@ import numpy as np
 
 class Synapse(object):
     """
-    A synapse interface to access and manage synapse parameters.
+    A synapse interface to access and manage synaptic connection parameters.
 
     Synapse objects acts like a dict with permanent keys.
     """
@@ -18,20 +18,16 @@ class Synapse(object):
 
     @property
     def _connection_id(self):
-        return np.array([self._source, self._target, self._thread, 
+        return np.array([self._source, self._target, self._thread,
                             self._synapse, self._port])
 
     def __len__(self):
         return len(self.keys())
 
     def __getitem__(self, key):
-        assert key in self.keys()
+        return nest.GetStatus([self._connection_id], key)[0]
 
-        return nest.GetStatus([self._connection_id], key)
-
-    def __setitem__(self, key, item)
-        assert key in self.keys()
-
+    def __setitem__(self, key, item):
         nest.SetStatus([self._connection_id], key, item)
 
     def __delitem__(self, key):
@@ -41,7 +37,8 @@ class Synapse(object):
         for key in self.keys():
             yield key
 
-    def keys(self):
+    @staticmethod
+    def keys():
         return ['synapse_model', 'target', 'weight', 'Kplus', 'delay', 
                     'source', 'receptor', 'type']
 

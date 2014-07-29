@@ -1,9 +1,10 @@
 import itertools
 import nest
 import nest.topology as tp
+import numpy as np
 
 from base import NestObject
-from node import Neuron
+from neuron import Neuron
 
 
 class Layer(NestObject):
@@ -35,7 +36,7 @@ class Layer(NestObject):
         self._spikes = nest.Create('spike_detector', 1, [{'label': 'input_spikes'}])[0]
         nest.ConvergentConnect(self.nodes, [self._spikes])
 
-    # methods to access neurons of a layer as a list
+    # methods to access neurons as a list
 
     def __len__(self):
         return len(self._neurons)
@@ -70,6 +71,25 @@ class Layer(NestObject):
         """
         start_indices = [self._y_dim*i for i in range(self._x_dim)]
         return [self[i:i + self._y_dim] for i in start_indices]
+
+    # weights access
+
+    @property
+    def weights(self):
+        """
+        returns 2D array of actual weights (1D - source, 2D - target nodes)
+        """
+        weights = [[x['weight'] for x in neuron.synapses] for neuron in self]
+        return np.array(weights)
+
+    @property
+    def weights_normalized(self):
+        """
+        returns 2D array of actual weights (1D - source, 2D - target node)
+        normalized to values between 0.0 and 1.0. Useful for plotting
+        """
+        all_weights = self.weights
+        return all_weights / (all_weights.max())
 
     # helper methods
 

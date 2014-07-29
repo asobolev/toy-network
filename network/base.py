@@ -12,7 +12,7 @@ class NestObject(object):
         return self._nest_id
 
 
-class Object2D(object):
+class I2D(object):
     """
     An Interface for container objects that store elements as a 2D matrix.
     """

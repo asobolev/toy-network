@@ -20,11 +20,14 @@ def analyse():
 
     map_layer = MapLayer(base_conf.MapNeuron())
 
-    conn_setup = base_conf.ForwardPlasticConnection()
-    conn_pool = ConnectionPool(input_layer, map_layer, conn_setup)
-
-    import ipdb
-    ipdb.set_trace()
+    targets = [x for x in map_layer]
+    params = {
+        'delay': 1.0,
+        'model': 'stdp_pl_norm_synapse_hom'
+    }
+    for neuron in input_layer:
+        weights = [float(x) for x in (300.0 * np.random.rand(len(targets)))]
+        neuron.synapse_with(targets, weights, **params)
 
     # monitors setup
     monitors = []
@@ -35,7 +38,7 @@ def analyse():
         monitors.append(voltmeter[0])
     
     # simulation
-    nest.Simulate(100000)
+    nest.Simulate(10000)
     
     # analysis
     output = []
@@ -43,12 +46,15 @@ def analyse():
         output.append(nest.GetStatus([node_id], 'events')[0])
     
     events = np.array([event['V_m'] for event in output])
-    fig = multiple_time_series(events, output[0]['times'])
+    #fig = multiple_time_series(events, output[0]['times'])
 
     #raster_plot.from_device([input_layer.spikes])
     #raster_plot.from_device([map_layer.spikes])
 
-    fig = weight_matrix(conn_pool.weights_normalized)
+    import ipdb
+    ipdb.set_trace()
+
+    fig = weight_matrix(input_layer.weights_normalized)
 
     plt.show()
 
