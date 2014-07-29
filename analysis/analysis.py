@@ -2,12 +2,11 @@ import numpy as np
 
 import nest
 import matplotlib.pyplot as plt
-import test.configurations as conf
-import setup.configurations as base_conf
+import configurations as conf
 
 from nest import raster_plot
-from network.layer import InputLayer, MapLayer
-from reduced.plot import multiple_time_series, weight_matrix
+from reduced.network.layer import InputLayer, MapLayer
+from plot import multiple_time_series, weight_matrix
 
 
 def analyse():
@@ -17,7 +16,7 @@ def analyse():
         2000., conf.INPUT['GKLEARN_5X5_0'], conf.NEURONS['INPUT_NEURON']
     )
 
-    map_layer = MapLayer(base_conf.MapNeuron())
+    map_layer = MapLayer(conf.NEURONS['MAP_NEURON'])
 
     targets = [x for x in map_layer]
     params = {
