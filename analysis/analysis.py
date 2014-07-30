@@ -13,13 +13,16 @@ from plot import multiple_time_series, weight_matrix, layer_co_dynamics
 
 def analyse():
 
+    # -------------
     # network setup
-    args = [2000., conf.INPUT['GKLEARN_5X5_0'], conf.NEURONS['INPUT_NEURON']]
-    input_layer = InputLayer(*args)
+    #--------------
 
-    map_layer = MapLayer(conf.NEURONS['MAP_NEURON'])
+    input_layer = InputLayer(2000., conf.GKLEARN_5X5_0, conf.INPUT_NEURON)
 
-    nest.CopyModel('stdp_synapse_hom', 'plastic', {'alpha': 0.1, 'Wmax': 1000.})
+    map_layer = MapLayer(conf.MAP_NEURON)
+
+    # plastic connections from input to map layer
+    nest.CopyModel('stdp_synapse_hom', 'plastic', {'alpha': 0.1, 'Wmax': 500.})
     targets = [x for x in map_layer]
     params = {
         'delay': 1.0,
@@ -29,23 +32,27 @@ def analyse():
         weights = [float(x) for x in (300.0 * np.random.rand(len(targets)))]
         neuron.synapse_with(targets, weights, **params)
 
+    # static inhibitory connections in the map layer
     params = {
         'delay': 1.0,
         'model': 'static_synapse',
     }
     for neuron in map_layer:
         some = random.sample(map_layer, 12)  # may include itself
-        neuron.synapse_with(some, -2.5, **params)
+        neuron.synapse_with(some, -150.0, **params)
 
     # monitors setup
     input_monitors = MonitorPool(VoltageMonitor, input_layer.nodes)
     map_monitors = MonitorPool(VoltageMonitor, map_layer.nodes)
 
-    #weight_means_before = np.array([x.mean() for x in input_layer.weights])
+    # ----------
+    # simulation
+    #-----------
     
     # simulation
-    nest.Simulate(5000)
+    nest.Simulate(6000)
 
+    #weight_means_before = np.array([x.mean() for x in input_layer.weights])
     #weight_means_after = np.array([x.mean() for x in input_layer.weights])
     #weight_means_diff = weight_means_after - weight_means_before
 
@@ -56,12 +63,13 @@ def analyse():
     events_i = np.array([vm.V_m for vm in input_monitors])
     events_m = np.array([vm.V_m for vm in map_monitors])
 
-    layer_co_dynamics(events_i, events_m, input_monitors[0].times)
+    #layer_co_dynamics(events_i, events_m, input_monitors[0].times)
 
     #raster_plot.from_device([input_layer.spikes])
     #raster_plot.from_device([map_layer.spikes])
 
-    fig = weight_matrix(input_layer.weights_normalized)
+    fig = weight_matrix(input_layer.weights)
+    #fig = weight_matrix(map_layer.weights)
 
     plt.show()
 

@@ -7,6 +7,10 @@ class SetupBase(object):
     Neurons, Connections, Input devices etc.
     """
 
+    def __init__(self, **kwargs):
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
     @property
     def is_valid(self):
         raise NotImplementedError()

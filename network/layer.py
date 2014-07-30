@@ -82,15 +82,6 @@ class Layer(NestObject):
         weights = [[x['weight'] for x in neuron.synapses] for neuron in self]
         return np.array(weights)
 
-    @property
-    def weights_normalized(self):
-        """
-        returns 2D array of actual weights (1D - source, 2D - target node)
-        normalized to values between 0.0 and 1.0. Useful for plotting
-        """
-        all_weights = self.weights
-        return all_weights / (all_weights.max())
-
     # helper methods
 
     @property

@@ -42,13 +42,23 @@ def weight_matrix(weights):
     """
     Creates an matrix image with colorbar for a given 2D weight matrix.
 
-    :param weights: 2D matrix with float32 values between 0.0 and 1.0
+    :param weights: 2D matrix with float32 values
     """
     fig = figure(figsize=(15, 10))
     ax = fig.add_subplot(111)
 
-    im = ax.imshow(weights, interpolation='nearest', origin='lower')
-    fig.colorbar(im)
+    w_max = round(weights.max(), 2)
+    w_min = round(weights.min(), 2)
+    w_avg = round((w_max + w_min) / 2, 2)
+
+    weights_normalized = weights / w_max
+    im = ax.imshow(weights_normalized, interpolation='nearest', origin='lower')
+
+    bar = fig.colorbar(im)
+    bar.set_ticks([w_min, w_avg, w_max])
+    bar.set_ticklabels([str(w_min), str(w_avg), str(w_max)])
+
+    fig.suptitle(str([str(w_min), str(w_avg), str(w_max)]))
 
     return fig
 
