@@ -1,8 +1,9 @@
+# TODO
+
+- integrate VoltageMonitors into neurons
 
 
 # NEST overall comments
-
-...
 
 - functions accept objects of different types (like Connect etc.) you can put
     whatever in there
@@ -17,7 +18,6 @@
 - model customization is implemented as a "copy" function instead of
     inheritance, which is a great limit comparing to OOP
 - pollution of the stdout instead of logging
-
 
 
 # simulation configuration management

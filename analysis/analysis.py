@@ -1,6 +1,7 @@
 import numpy as np
 
 import nest
+import random
 import matplotlib.pyplot as plt
 import configurations as conf
 
@@ -18,7 +19,6 @@ def analyse():
 
     map_layer = MapLayer(conf.NEURONS['MAP_NEURON'])
 
-
     nest.CopyModel('stdp_synapse_hom', 'plastic', {'alpha': 0.1, 'Wmax': 1000.})
     targets = [x for x in map_layer]
     params = {
@@ -28,6 +28,14 @@ def analyse():
     for neuron in input_layer:
         weights = [float(x) for x in (300.0 * np.random.rand(len(targets)))]
         neuron.synapse_with(targets, weights, **params)
+
+    params = {
+        'delay': 1.0,
+        'model': 'static_synapse',
+    }
+    for neuron in map_layer:
+        some = random.sample(map_layer, 12)  # may include itself
+        neuron.synapse_with(some, -2.5, **params)
 
     # monitors setup
     input_monitors = MonitorPool(VoltageMonitor, input_layer.nodes)
