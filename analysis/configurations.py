@@ -8,6 +8,12 @@ GKLEARN_5X5_0 = ISGStraightSetup(**{
     'movie_path': '../data/5x5gklearn0.idlmov'
 })
 
+GKLEARN_5X5_0_BABY = ISGStraightSetup(**{
+    'stimuli_duration': 50.0,
+    'i_s_i': 50.0,
+    'movie_path': '../data/5x5gklearn0.idlmov'
+})
+
 GKLEARN_5X5_1 = ISGStraightSetup(**{
     'stimuli_duration': 20.0,
     'i_s_i': 200.0,

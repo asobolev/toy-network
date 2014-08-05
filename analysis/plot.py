@@ -47,16 +47,19 @@ def weight_matrix(weights):
     fig = figure(figsize=(15, 10))
     ax = fig.add_subplot(111)
 
-    w_max = round(weights.max(), 2)
-    w_min = round(weights.min(), 2)
-    w_avg = round((w_max + w_min) / 2, 2)
+    w_max = weights.max()
+    w_min = weights.min()
+    w_avg = (w_max + w_min) / 2
+    delta = w_max - w_min
 
     weights_normalized = weights / w_max
     im = ax.imshow(weights_normalized, interpolation='nearest', origin='lower')
 
     bar = fig.colorbar(im)
-    bar.set_ticks([w_min, w_avg, w_max])
-    bar.set_ticklabels([str(w_min), str(w_avg), str(w_max)])
+    bar.set_ticks([round((w_min + (x * delta/10.0))/w_max, 2) for x in range(10)])
+    bar.set_ticklabels([str(round(w_min + (x * delta/10.0), 2)) for x in range(10)])
+    #import ipdb
+    #ipdb.set_trace()
 
     fig.suptitle(str([str(w_min), str(w_avg), str(w_max)]))
 

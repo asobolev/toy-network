@@ -1,6 +1,8 @@
 # TODO
 
 - integrate VoltageMonitors into neurons
+- make weight plot functions accept axes and drow on them, thus making
+    several plots on the same figure possible
 
 
 # NEST overall comments
