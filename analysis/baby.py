@@ -8,7 +8,8 @@ import configurations as conf
 from nest import raster_plot
 from reduced.network.layer import InputLayer, MapLayer
 from reduced.network.monitors import VoltageMonitor, MonitorPool
-from plot import multiple_time_series, weight_matrix, layer_co_dynamics
+from plot.dynamics import multiple_time_series, layer_co_dynamics
+from plot.weights import weights_multiple
 
 
 def analyse():
@@ -29,7 +30,7 @@ def analyse():
         'model': 'plastic',
         }
     for neuron in input_layer:
-        weights = [float(x) for x in (50.0 * np.random.rand(len(targets)))]
+        weights = [float(x) for x in (90.0 * np.random.rand(len(targets)))]
         #weights = [float(x * 50.0) for x in np.ones(len(targets))]
         neuron.synapse_with(targets, weights, **params)
 
@@ -40,9 +41,9 @@ def analyse():
         }
     for neuron in map_layer:
         neighbors = [x for x in map_layer if not x.id == neuron.id]
-        neuron.synapse_with(neighbors, -50.0, **params)
+        neuron.synapse_with(neighbors, -350.0, **params)
 
-    fig = weight_matrix(input_layer.weights)
+    weights_before = np.array(input_layer.weights)
 
     # monitors setup
     input_monitors = MonitorPool(VoltageMonitor, input_layer.nodes)
@@ -55,24 +56,15 @@ def analyse():
     # simulation
     nest.Simulate(10000)
 
-    #weight_means_before = np.array([x.mean() for x in input_layer.weights])
-    #weight_means_after = np.array([x.mean() for x in input_layer.weights])
-    #weight_means_diff = weight_means_after - weight_means_before
-
-    #for neuron in input_layer:
-    #    nest.SetStatus([neuron.id], 'weight', 0.1)
-
     # analysis
     events_i = np.array([vm.V_m for vm in input_monitors])
     events_m = np.array([vm.V_m for vm in map_monitors])
 
-    #layer_co_dynamics(events_i, events_m, input_monitors[0].times)
+    layer_co_dynamics(events_i, events_m, input_monitors[0].times)
 
-    #raster_plot.from_device([input_layer.spikes])
-    #raster_plot.from_device([map_layer.spikes])
+    weights_after = np.array(input_layer.weights)
 
-    fig = weight_matrix(input_layer.weights)
-    #fig = weight_matrix(map_layer.weights)
+    fig = weights_multiple([weights_before, weights_after])
 
     plt.show()
 

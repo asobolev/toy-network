@@ -38,10 +38,11 @@ def multiple_time_series(events, times):
     return fig
 
 
-def weight_matrix(weights):
+def weight_matrix(ax, weights):
     """
-    Creates an matrix image with colorbar for a given 2D weight matrix.
+    Paints given 2D weight matrix (with a colorbar) on the given axes.
 
+    :param ax:      matplotlib axes where to plot
     :param weights: 2D matrix with float32 values
     """
     fig = figure(figsize=(15, 10))
@@ -58,12 +59,6 @@ def weight_matrix(weights):
     bar = fig.colorbar(im)
     bar.set_ticks([round((w_min + (x * delta/10.0))/w_max, 2) for x in range(10)])
     bar.set_ticklabels([str(round(w_min + (x * delta/10.0), 2)) for x in range(10)])
-    #import ipdb
-    #ipdb.set_trace()
-
-    fig.suptitle(str([str(w_min), str(w_avg), str(w_max)]))
-
-    return fig
 
 
 def layer_co_dynamics(i_events, m_events, times):
