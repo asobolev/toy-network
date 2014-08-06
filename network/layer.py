@@ -60,6 +60,14 @@ class Layer(NestObject):
     # 2D access interface
 
     @property
+    def x_dim(self):
+        return self._x_dim
+
+    @property
+    def y_dim(self):
+        return self._y_dim
+
+    @property
     def as_matrix(self):
         """
         Returns a 2D list with related neuron objects. Makes it easier to access
