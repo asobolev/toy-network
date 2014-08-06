@@ -59,7 +59,7 @@ def analyse():
     #for neuron in input_layer:
     #    nest.SetStatus([neuron.id], 'weight', 0.1)
 
-    # analysis
+    # simulation
     events_i = np.array([vm.V_m for vm in input_monitors])
     events_m = np.array([vm.V_m for vm in map_monitors])
 

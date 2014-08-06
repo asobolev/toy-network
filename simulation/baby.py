@@ -56,7 +56,7 @@ def analyse():
     # simulation
     nest.Simulate(10000)
 
-    # analysis
+    # simulation
     events_i = np.array([vm.V_m for vm in input_monitors])
     events_m = np.array([vm.V_m for vm in map_monitors])
 

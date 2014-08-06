@@ -61,7 +61,7 @@ def execute():
 
         nest.Simulate(1000.0)
 
-    # analysis
+    # simulation
     print scales
 
     output = []
