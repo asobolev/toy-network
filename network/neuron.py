@@ -35,5 +35,6 @@ class Neuron(NestObject):
         """
 
         # TODO exclude connection with Layer
+        # TODO remove NEST message like <lockPTR[3]->dictionarytype(0x67e9fa0)>
         nodes = nest.GetConnections([self.id])
         return [Synapse(*list(node)) for node in nodes]

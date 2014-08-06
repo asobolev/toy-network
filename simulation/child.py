@@ -8,16 +8,12 @@ import configurations as conf
 from nest import raster_plot
 from reduced.network.layer import InputLayer, MapLayer
 from reduced.network.monitors import VoltageMonitor, MonitorPool
-from plot import multiple_time_series, weight_matrix, layer_co_dynamics
+from plot.dynamics import multiple_time_series, layer_co_dynamics
+from plot.weights import weights_multiple, neuron_ids_in_layer
 
 
-def analyse():
-
-    # -------------
-    # network setup
-    #--------------
-
-    input_layer = InputLayer(2000., conf.GKLEARN_5X5_0, conf.INPUT_NEURON)
+def network_setup():
+    input_layer = InputLayer(2000., conf.GKLEARN_5X5_0_BABY, conf.INPUT_NEURON)
 
     map_layer = MapLayer(conf.MAP_NEURON)
 
@@ -29,17 +25,35 @@ def analyse():
         'model': 'plastic',
     }
     for neuron in input_layer:
-        weights = [float(x) for x in (300.0 * np.random.rand(len(targets)))]
+        weights = [float(x) for x in (100.0 * np.random.rand(len(targets)))]
         neuron.synapse_with(targets, weights, **params)
 
-    # static inhibitory connections in the map layer
+    # static random inhibitory connections in the map layer
     params = {
         'delay': 1.0,
         'model': 'static_synapse',
     }
     for neuron in map_layer:
         some = random.sample(map_layer, 12)  # may include itself
-        neuron.synapse_with(some, -150.0, **params)
+        neuron.synapse_with(some, -250.0, **params)
+
+    # excitatory connections to neighboring neurons
+    params = {
+        'delay': 1.0,
+        'model': 'static_synapse',
+    }
+    #for column in in map_layer.as_matrix:
+    #    some = random.sample(map_layer, 12)
+    #    neuron.synapse_with(some, -250.0, **params)
+
+
+    return input_layer, map_layer
+
+
+def simulation(input_layer, map_layer):
+
+    # save weights
+    weights_before = np.array(input_layer.weights)
 
     # monitors setup
     input_monitors = MonitorPool(VoltageMonitor, input_layer.nodes)
@@ -50,7 +64,9 @@ def analyse():
     #-----------
     
     # simulation
-    nest.Simulate(6000)
+    nest.Simulate(10000)
+
+    weights_after = np.array(input_layer.weights)
 
     #weight_means_before = np.array([x.mean() for x in input_layer.weights])
     #weight_means_after = np.array([x.mean() for x in input_layer.weights])
@@ -66,13 +82,15 @@ def analyse():
     #layer_co_dynamics(events_i, events_m, input_monitors[0].times)
 
     #raster_plot.from_device([input_layer.spikes])
-    #raster_plot.from_device([map_layer.spikes])
+    #raster_plot.from_device([map_layer.spikes], hist=True)
 
-    fig = weight_matrix(input_layer.weights)
-    #fig = weight_matrix(map_layer.weights)
+    fig = neuron_ids_in_layer(map_layer)
+
+    #fig = weights_multiple([weights_before, weights_after])
 
     plt.show()
 
 
 if __name__ == '__main__':
-    analyse()
+    input_layer, map_layer = network_setup()
+    simulation(input_layer, map_layer)

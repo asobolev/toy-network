@@ -19,7 +19,6 @@ def weights_multiple(weights):
 
         w_max = matrix.max()
         w_min = matrix.min()
-        w_avg = (w_max + w_min) / 2
         delta = w_max - w_min
 
         weights_normalized = matrix / w_max
@@ -28,5 +27,31 @@ def weights_multiple(weights):
         bar = fig.colorbar(im)
         bar.set_ticks([round((w_min + (x * delta/10.0))/w_max, 2) for x in range(10)])
         bar.set_ticklabels([str(round(w_min + (x * delta/10.0), 2)) for x in range(10)])
+
+    return fig
+
+
+def neuron_ids_in_layer(layer):
+    """
+    Creates an image with neuron ids from a given layer.
+
+    :param weights: list of numpy 2D arrays with float values
+    """
+    ids = [map(lambda x: float(getattr(x, 'id')), column) for column in layer.as_matrix]
+    matrix = np.array(ids)
+
+    fig = figure(figsize=(15, 10))
+    ax = fig.add_subplot(111)
+
+    w_max = matrix.max()
+    w_min = matrix.min()
+    delta = w_max - w_min
+
+    weights_normalized = matrix / w_max
+    im = ax.imshow(weights_normalized, interpolation='nearest', origin='lower')
+
+    bar = fig.colorbar(im)
+    bar.set_ticks([round((w_min + (x * delta/10.0))/w_max, 2) for x in range(10)])
+    bar.set_ticklabels([str(round(w_min + (x * delta/10.0), 2)) for x in range(10)])
 
     return fig
