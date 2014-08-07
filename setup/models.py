@@ -19,6 +19,9 @@ class SetupBase(object):
     def as_nest_dict(self):
         raise NotImplementedError()
 
+#--------
+# Neurons
+#--------
 
 class NeuronSetup(SetupBase):
 
@@ -44,6 +47,9 @@ class NeuronSetup(SetupBase):
             'lat_ex_input_ports': self.lat_ex_input_ports
         }
 
+#-----------------
+# Image Generators
+#-----------------
 
 class ISGStraightSetup(SetupBase):
 
@@ -106,45 +112,62 @@ class ISGSequenceSetup(SetupBase):
             }
         }
 
+#------------
+# Connections
+#------------
 
 class ConnectionSetup(SetupBase):
 
-    synapse_model = None
-    connection_type = None
-    mask = None
-    weights = None
+    synapse_type = None
+
+    @property
+    def is_valid(self):
+        return self.synapse_type is not None
+
+
+class ForwardConnectionSetup(SetupBase):
+
+    synapse_type = None
+    wmax = None
+
+
+class InhibitoryConnectionSetup(SetupBase):
+
+    synapse_type = None
+    quantity = None
+    weight = None
+
+
+class ExcitatoryConnectionSetup(SetupBase):
+
+    synapse_type = None
+    weight = None
+
+
+#---------
+# Synapses
+#---------
+
+class SynapseSetup(SetupBase):
+
+    # an abstract class for synapse setup
+
+    tau_plus = None
+    alpha = None
+    lambda_ = None
 
     @property
     def is_valid(self):
         not_none = lambda x, y: x and (getattr(self, y) is not None)
-        return reduce(not_none, ['synapse_model', 'connection_type'], True)
-
-    @property
-    def as_nest_dict(self):
-        result = {
-            'synapse_model': self.synapse_model,
-            'connection_type': self.connection_type
-        }
-        if self.mask is not None:
-            result['mask'] = self.mask
-        if self.weights is not None:
-            result['weights'] = self.weights
-        return result
+        return self.alpha is not None
 
 
-class SynapseSetup(SetupBase):
+class SynapseHomNormSetup(SynapseSetup):
 
-    alpha = None
-    lambda_ = None
     weight = None
     norm_freq = None
     norm_fac1 = None
     norm_fac0 = None
-
-    @property
-    def is_valid(self):
-        not_none = lambda x, y: x and (getattr(self, y) is not None)
-        return reduce(not_none, ['alpha', 'lambda_', 'weight'], True)
 
     @property
     def as_nest_dict(self):
@@ -156,3 +179,22 @@ class SynapseSetup(SetupBase):
             'norm_fac1': self.norm_fac1,
             'norm_fac0': self.norm_fac0,
         }
+
+
+class SynapseHomSetup(SynapseSetup):
+
+    mu_plus = None
+    mu_minus = None
+    Wmax = None
+
+    @property
+    def as_nest_dict(self):
+        attrs = ('tau_plus', 'alpha', 'mu_plus', 'mu_minus', 'Wmax')
+        combined = zip(attrs, map(lambda x: getattr(self, x), attrs))
+        not_none = filter(lambda x: x[1] is not None, combined)
+
+        if self.lambda_ is not None:
+            not_none.append(('lambda', self.lambda_))
+
+        return dict(not_none)
+

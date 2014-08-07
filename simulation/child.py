@@ -15,19 +15,14 @@ from plot.weights import weights_multiple, neuron_ids_in_layer
 
 def network_setup():
 
-    params = {
-        'synapse_type': 'plastic',
-        'weight_max': 100,
-    }
-
-
     input_layer = InputLayer(2000., conf.GKLEARN_5X5_0, conf.INPUT_NEURON)
     map_layer = MapLayer(conf.MAP_NEURON)
 
     # plastic connections from input to map layer
-    nest.CopyModel('stdp_synapse_hom', 'plastic', {'alpha': 0.1, 'Wmax': 500.})
+    nest.CopyModel('stdp_synapse_hom', 'plastic', 
+                   conf.HOM_SYNAPSE.as_nest_dict)
     nest.CopyModel('stdp_pl_norm_synapse_hom', 'plastic_normalized',
-                   conf.NORM_SYNAPSE.as_nest_dict)
+                   conf.HOM_NORM_SYNAPSE.as_nest_dict)
 
     targets = [x for x in map_layer]
     for neuron in input_layer:

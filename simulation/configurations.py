@@ -1,5 +1,8 @@
 from __future__ import absolute_import
-from reduced.setup.models import NeuronSetup, ISGStraightSetup, SynapseSetup
+from reduced.setup.models import NeuronSetup, ISGStraightSetup
+from reduced.setup.models import SynapseHomSetup, SynapseHomNormSetup
+from reduced.setup.models import ForwardConnectionSetup, InhibitoryConnectionSetup, ExcitatoryConnectionSetup
+
 
 #-----------------
 # Image generators
@@ -42,11 +45,36 @@ MAP_NEURON = NeuronSetup(**{
     'lat_ex_input_ports': [0]
 })
 
+#------------
+# Connections
+#------------
+
+FWD_CONN = ForwardConnectionSetup(**{
+    'synapse_type': 'stdp_synapse_hom',
+    'wmax': 100,
+})
+
+INH_CONN = InhibitoryConnectionSetup(**{
+    'synapse_type': 'static_synapse',
+    'quantity': 12,
+    'weight': -500.
+})
+
+EXC_CONN = ExcitatoryConnectionSetup(**{
+    'synapse_type': 'static_synapse',
+    'weight': -500.
+})
+
 #---------
 # Synapses
 #---------
 
-NORM_SYNAPSE = SynapseSetup(**{
+HOM_SYNAPSE = SynapseHomSetup(**{
+    'alpha': 0.1,
+    'Wmax': 500.
+})
+
+HOM_NORM_SYNAPSE = SynapseHomNormSetup(**{
     'alpha': 0.1,
     'lambda_': 0.01,
     'weight': 0.05,
