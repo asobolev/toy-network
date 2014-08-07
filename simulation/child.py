@@ -15,34 +15,24 @@ from plot.weights import weights_multiple, neuron_ids_in_layer
 
 def network_setup():
     input_layer = InputLayer(2000., conf.GKLEARN_5X5_0, conf.INPUT_NEURON)
-
     map_layer = MapLayer(conf.MAP_NEURON)
 
     # plastic connections from input to map layer
     nest.CopyModel('stdp_synapse_hom', 'plastic', {'alpha': 0.1, 'Wmax': 500.})
+    nest.CopyModel('stdp_pl_norm_synapse_hom', 'plastic_normalized',
+                   conf.NORM_SYNAPSE.as_nest_dict)
+
     targets = [x for x in map_layer]
-    params = {
-        'delay': 1.0,
-        'model': 'plastic',
-    }
     for neuron in input_layer:
         weights = [float(x) for x in (100.0 * np.random.rand(len(targets)))]
-        neuron.synapse_with(targets, weights, **params)
+        neuron.synapse_with(targets, weights, model='plastic')
 
     # static random inhibitory connections in the map layer
-    params = {
-        'delay': 1.0,
-        'model': 'static_synapse',
-    }
     for neuron in map_layer:
         some = random.sample(map_layer, 12)  # may include itself
-        neuron.synapse_with(some, -500.0, **params)
+        neuron.synapse_with(some, -500.0, model='static_synapse')
 
     # excitatory connections to neighboring neurons
-    params = {
-        'delay': 1.0,
-        'model': 'static_synapse',
-    }
     for x, row in enumerate(map_layer.as_matrix):
         for y, neuron in enumerate(row):
             horizontal = (x-1, x, x+1 if x+1 < map_layer.x_dim else -1)
@@ -51,7 +41,7 @@ def network_setup():
             coords = filter(lambda q: not q == (x, y), coords)
 
             neighbors = [map_layer.as_matrix[i][j] for i, j in coords]
-            neuron.synapse_with(neighbors, 250.0, **params)
+            neuron.synapse_with(neighbors, 250.0, model='static_synapse')
 
     return input_layer, map_layer
 
@@ -64,7 +54,7 @@ def simulation(input_layer, map_layer):
     map_monitors = MonitorPool(VoltageMonitor, map_layer.nodes)
 
     # simulation
-    nest.Simulate(8000)
+    nest.Simulate(10000)
 
     # resulting data
     weights_after = np.array(input_layer.weights)

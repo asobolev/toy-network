@@ -1,6 +1,9 @@
 from __future__ import absolute_import
-from reduced.setup.models import NeuronSetup, ISGStraightSetup
+from reduced.setup.models import NeuronSetup, ISGStraightSetup, SynapseSetup
 
+#-----------------
+# Image generators
+#-----------------
 
 GKLEARN_5X5_0 = ISGStraightSetup(**{
     'stimuli_duration': 50.0,
@@ -13,6 +16,10 @@ GKLEARN_5X5_1 = ISGStraightSetup(**{
     'i_s_i': 200.0,
     'movie_path': '../data/5x5gklearn1.idlmov'
 })
+
+#--------
+# Neurons
+#--------
 
 INPUT_NEURON = NeuronSetup(**{
     'model': 'pixel_iaf_psc_exp',
@@ -33,4 +40,17 @@ MAP_NEURON = NeuronSetup(**{
         'V_reset': -55.
     },
     'lat_ex_input_ports': [0]
+})
+
+#---------
+# Synapses
+#---------
+
+NORM_SYNAPSE = SynapseSetup(**{
+    'alpha': 0.1,
+    'lambda_': 0.01,
+    'weight': 0.05,
+    'norm_freq': 400.,
+    'norm_fac1': 0.9,
+    'norm_fac0': 0.2
 })
