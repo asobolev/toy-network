@@ -14,6 +14,13 @@ from plot.weights import weights_multiple, neuron_ids_in_layer
 
 
 def network_setup():
+
+    params = {
+        'synapse_type': 'plastic',
+        'weight_max': 100,
+    }
+
+
     input_layer = InputLayer(2000., conf.GKLEARN_5X5_0, conf.INPUT_NEURON)
     map_layer = MapLayer(conf.MAP_NEURON)
 
