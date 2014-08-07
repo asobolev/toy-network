@@ -2,7 +2,7 @@ import nest
 import numpy as np
 import matplotlib.pyplot as plt
 
-from plot import *
+from plot.dynamics import *
 
 
 def execute():
@@ -28,7 +28,7 @@ def execute():
 
     kwargs = {
         'params': {'weight': 200.},
-        'model': 'plastic',  #'stdp_pl_norm_synapse_hom'
+        'model': 'plastic',
     }
     nest.Connect(input_neuron, output_neuron, **kwargs)
     connection = nest.GetConnections(input_neuron, output_neuron)
