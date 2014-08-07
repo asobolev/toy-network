@@ -5,7 +5,11 @@
     several plots on the same figure possible
 - (?) create a small network object
 - use ipynb for demos, print configurations (add repr to basesetup? as_dict)
-- check dimensions for the weights plot
++ check dimensions for the weights plot
+- remove base configurations
+- split setup.models into several modules
+- test network script
+
 
 
 # NEST overall comments
