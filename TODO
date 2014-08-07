@@ -1,14 +1,17 @@
 # TODO
 
 - integrate VoltageMonitors into neurons
-- make weight plot functions accept axes and drow on them, thus making
+- (?) make weight plot functions accept axes and drow on them, thus making
     several plots on the same figure possible
+- (?) create a small network object
+- use ipynb for demos, print configurations (add repr to basesetup? as_dict)
+- check dimensions for the weights plot
 
 
 # NEST overall comments
 
 - functions accept objects of different types (like Connect etc.) you can put
-    whatever in there
+    whatever garbage in there
 - all parameters are just nested dicts (hey, why do we have OOP?) why don't we
     write a single function called run() and pass all parameters as dict there?
     It's insanely hard to find the right parameter dicts and understand what
@@ -20,6 +23,8 @@
 - model customization is implemented as a "copy" function instead of
     inheritance, which is a great limit comparing to OOP
 - pollution of the stdout instead of logging
+- pollution of the stdout changes depending on the global state (it grows..)
+- there is no way to delete things. Useful in many cases
 
 
 # simulation configuration management

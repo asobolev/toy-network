@@ -14,7 +14,7 @@ from plot.weights import weights_multiple, neuron_ids_in_layer
 
 
 def network_setup():
-    input_layer = InputLayer(2000., conf.GKLEARN_5X5_0_BABY, conf.INPUT_NEURON)
+    input_layer = InputLayer(2000., conf.GKLEARN_5X5_0, conf.INPUT_NEURON)
 
     map_layer = MapLayer(conf.MAP_NEURON)
 
@@ -36,7 +36,7 @@ def network_setup():
     }
     for neuron in map_layer:
         some = random.sample(map_layer, 12)  # may include itself
-        neuron.synapse_with(some, -450.0, **params)
+        neuron.synapse_with(some, -500.0, **params)
 
     # excitatory connections to neighboring neurons
     params = {

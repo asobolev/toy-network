@@ -11,6 +11,7 @@ def weights_multiple(weights):
     """
 
     fig = figure(figsize=(15, 10))
+    fig.canvas.set_window_title('Weights input - map layers')
 
     total = len(weights)
     for i, matrix in enumerate(weights):
@@ -23,6 +24,9 @@ def weights_multiple(weights):
 
         weights_normalized = matrix / w_max
         im = ax.imshow(weights_normalized, interpolation='nearest', origin='lower')
+
+        ax.set_xlabel('map neurons')
+        ax.set_ylabel('input neurons')
 
         bar = fig.colorbar(im)
         bar.set_ticks([round((w_min + (x * delta/10.0))/w_max, 2) for x in range(10)])

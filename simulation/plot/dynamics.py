@@ -46,6 +46,10 @@ def layer_co_dynamics(i_events, m_events, times):
     :param times:   1D (numpy) array with times
     """
     fig = figure(figsize=(15, 10))
+
+    title = 'Input (top) and map (bottom) neurons voltage traces'
+    fig.canvas.set_window_title(title)
+
     ax_i = fig.add_subplot(211)
     ax_m = fig.add_subplot(212)
 
