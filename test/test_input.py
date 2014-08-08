@@ -4,7 +4,7 @@ import numpy as np
 import nest
 
 import configurations as conf
-from network.layer import InputLayer
+from reduced.network.layer import InputLayer
 
 
 class TestInputLayer(unittest.TestCase):
@@ -15,8 +15,8 @@ class TestInputLayer(unittest.TestCase):
     def test_spiking(self):
         conf_dict = {
             'input_weight': 2000.,
-            'ISG_setup': conf.INPUT['GKLEARN_5X5_0'],
-            'neuron_setup': conf.NEURONS['INPUT_NEURON'],
+            'ISG_setup': conf.GKLEARN_5X5_0,
+            'neuron_setup': conf.INPUT_NEURON,
             'x_dim': 5,
             'y_dim': 5
         }
