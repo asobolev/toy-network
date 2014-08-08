@@ -6,8 +6,8 @@
 - (?) create a small network object
 - use ipynb for demos, print configurations (add repr to basesetup? as_dict)
 + check dimensions for the weights plot
-- remove base configurations
-- split setup.models into several modules
++ remove base configurations
++ split setup.models into several modules
 - test network script
 - check for convergence
 

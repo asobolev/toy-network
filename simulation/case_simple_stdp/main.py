@@ -6,6 +6,7 @@ from nest import raster_plot
 
 from reduced.network.network import ToyNetwork
 from reduced.network.monitors import VoltageMonitor, MonitorPool
+from reduced.simulation.utils import from_file, parse_to_objects
 from reduced.simulation.plot.dynamics import layer_co_dynamics
 from reduced.simulation.plot.weights import weights_multiple
 
@@ -50,8 +51,15 @@ def simulation(network):
 
 if __name__ == '__main__':
 
-    network = ToyNetwork(GKLEARN_5X5_0, INPUT_NEURON, MAP_NEURON, HOM_SYNAPSE,
-                         FWD_CONN, INH_CONN, EXC_CONN)
+    setup_dict = parse_to_objects(from_file('configurations.json'))
+
+    network_setup = [
+        setup_dict['GKLEARN_5X5_0'], setup_dict['INPUT_NEURON'],
+        setup_dict['MAP_NEURON'], setup_dict['HOM_SYNAPSE'],
+        setup_dict['FWD_CONN'], setup_dict['INH_CONN'], setup_dict['EXC_CONN']
+    ]
+    network = ToyNetwork(*network_setup)
+
     simulation(network)
 
     """

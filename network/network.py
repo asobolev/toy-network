@@ -42,6 +42,9 @@ class ToyNetwork(object):
             some = random.sample(self._map_layer, INH_CONN.quantity)
             neuron.synapse_with(some, INH_CONN.weight, model=INH_CONN.model)
 
+        import ipdb
+        ipdb.set_trace()
+
         # excitatory connections to neighboring neurons
         for x, row in enumerate(self._map_layer.as_matrix):
             for y, neuron in enumerate(row):
