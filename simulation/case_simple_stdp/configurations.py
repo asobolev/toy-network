@@ -1,7 +1,8 @@
 from __future__ import absolute_import
-from reduced.setup.models import NeuronSetup, ISGStraightSetup
-from reduced.setup.models import SynapseHomSetup, SynapseHomNormSetup
-from reduced.setup.models import ForwardConnectionSetup, InhibitoryConnectionSetup, ExcitatoryConnectionSetup
+from reduced.setup.inputs import ISGStraightSetup
+from reduced.setup.neurons import NeuronSetup
+from reduced.setup.synapses import SynapseHomSetup
+from reduced.setup.connections import ForwardConnectionSetup, InhibitoryConnectionSetup, ExcitatoryConnectionSetup
 
 
 #-----------------
@@ -11,13 +12,7 @@ from reduced.setup.models import ForwardConnectionSetup, InhibitoryConnectionSet
 GKLEARN_5X5_0 = ISGStraightSetup(**{
     'stimuli_duration': 50.0,
     'i_s_i': 50.0,
-    'movie_path': '../data/5x5gklearn0.idlmov'
-})
-
-GKLEARN_5X5_1 = ISGStraightSetup(**{
-    'stimuli_duration': 20.0,
-    'i_s_i': 200.0,
-    'movie_path': '../data/5x5gklearn1.idlmov'
+    'movie_path': '../../data/5x5gklearn0.idlmov'
 })
 
 #--------
@@ -50,18 +45,18 @@ MAP_NEURON = NeuronSetup(**{
 #------------
 
 FWD_CONN = ForwardConnectionSetup(**{
-    'synapse_type': 'stdp_synapse_hom',
+    'model': 'stdp_synapse_hom',
     'wmax': 100,
 })
 
 INH_CONN = InhibitoryConnectionSetup(**{
-    'synapse_type': 'static_synapse',
+    'model': 'static_synapse',
     'quantity': 12,
     'weight': -500.
 })
 
 EXC_CONN = ExcitatoryConnectionSetup(**{
-    'synapse_type': 'static_synapse',
+    'model': 'static_synapse',
     'weight': -500.
 })
 
@@ -72,13 +67,4 @@ EXC_CONN = ExcitatoryConnectionSetup(**{
 HOM_SYNAPSE = SynapseHomSetup(**{
     'alpha': 0.1,
     'Wmax': 500.
-})
-
-HOM_NORM_SYNAPSE = SynapseHomNormSetup(**{
-    'alpha': 0.1,
-    'lambda_': 0.01,
-    'weight': 0.05,
-    'norm_freq': 400.,
-    'norm_fac1': 0.9,
-    'norm_fac0': 0.2
 })

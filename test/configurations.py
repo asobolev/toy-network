@@ -1,5 +1,6 @@
 from __future__ import absolute_import
-from reduced.setup.models import NeuronSetup, ISGStraightSetup
+from reduced.setup.neurons import NeuronSetup
+from reduced.setup.inputs import ISGStraightSetup
 
 
 #-----------------
