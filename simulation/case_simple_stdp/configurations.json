@@ -43,7 +43,7 @@
     "ExcitatoryConnectionSetup": {
         "EXC_CONN": {
             "model": "stdp_synapse_hom",
-            "wmax": 100
+            "weight": 100.0
         }
     },
     "SynapseHomSetup": {

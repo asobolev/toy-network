@@ -35,3 +35,8 @@
 # simulation configuration management
 
 - pypet - in development + hardly uses global state
+- convert ipynb to py with
+    ipython nbconvert --to=python [YOUR_NOTEBOOK].ipynb
+    ipython notebook --script --pylab inline
+
+
