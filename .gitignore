@@ -34,3 +34,6 @@ pip-log.txt
 # kdevelop files
 *kdev*
 Makefile
+
+# ipython notebook
+.ipynb_checkpoints*
