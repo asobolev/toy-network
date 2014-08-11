@@ -51,7 +51,7 @@ weights_before = np.array(network.input_layer.weights)  # remember original weig
 # <codecell>
 
 max_simulation_time = 5000
-time_bin = 5000
+time_bin = 10000
 convergence_delta = 5  # criteria for convergence
 
 time_passed = 0
@@ -89,8 +89,8 @@ fig = weights_multiple([weights_before, weights_after])
 
 from reduced.network.monitors import VoltageMonitor, MonitorPool, SpikeDetector
 
-input_monitors = MonitorPool(VoltageMonitor, network.input_layer.nodes)
-map_monitors = MonitorPool(VoltageMonitor, network.map_layer.nodes)
+#input_monitors = MonitorPool(VoltageMonitor, network.input_layer.nodes)
+#map_monitors = MonitorPool(VoltageMonitor, network.map_layer.nodes)
 
 spike_detector = SpikeDetector(network.map_layer.nodes)
 
@@ -104,7 +104,7 @@ nest.Simulate(5000)
 
 # <markdowncell>
 
-# Compare voltage outputs:
+# Compare outputs:
 
 # <codecell>
 
@@ -123,7 +123,4 @@ fig2 = raster_plot.from_device([spike_detector.id], hist=True)
 # <codecell>
 
 plt.show()
-
-# <codecell>
-
 

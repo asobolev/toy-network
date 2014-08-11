@@ -38,8 +38,8 @@
             "quantity": 12
         },
         "EXC_CONN": {
-            "model": "stdp_synapse_hom",
-            "weight": 100.0
+            "model": "static_synapse",
+            "weight": 120.0
         }
     },
     "SynapseHomSetup": {
