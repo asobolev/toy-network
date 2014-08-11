@@ -4,8 +4,8 @@ from base import NestObject
 
 class MonitorPool(object):
 
-    def __init__(self, monitor_cls, nest_node_ids):
-        self._monitors = [monitor_cls(node_id) for node_id in nest_node_ids]
+    def __init__(self, monitor_cls, neurons):
+        self._monitors = [monitor_cls(node_id) for node_id in neurons]
 
     def __len__(self):
         return len(self._monitors)
@@ -51,3 +51,22 @@ class VoltageMonitor(NestObject):
     def times(self):
         return self._get_data['times']
 
+
+class SpikeDetector(NestObject):
+
+    def __init__(self, nest_node_ids):
+
+        self._nest_id = nest.Create('spike_detector')[0]
+        nest.ConvergentConnect(nest_node_ids, [self._nest_id])
+
+    @property
+    def _get_data(self):
+        return nest.GetStatus([self.id], 'events')[0]
+
+    @property
+    def senders(self):
+        return self._get_data['senders']
+
+    @property
+    def times(self):
+        return self._get_data['times']

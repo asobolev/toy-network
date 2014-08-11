@@ -33,9 +33,6 @@ class Layer(NestObject):
         node_ids = nest.GetNodes([self._nest_id])[0]
         self._neurons = [Neuron(nid) for nid in node_ids]
 
-        self._spikes = nest.Create('spike_detector', 1, [{'label': 'input_spikes'}])[0]
-        nest.ConvergentConnect(self.nodes, [self._spikes])
-
     # methods to access neurons as a list
 
     def __len__(self):
@@ -95,15 +92,6 @@ class Layer(NestObject):
     @property
     def nodes(self):
         return [x.id for x in self._neurons]
-
-    # spike detector interface
-
-    @property
-    def spikes(self):
-        return self._spikes
-
-    def clear_spike_detector(self):
-        nest.SetStatus([self._spikes], 'n_events', 0)
 
 
 class InputLayer(Layer):
