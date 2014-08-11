@@ -1,7 +1,8 @@
 import simplejson as json
 from reduced.setup import *
 
-setup_classes = [ISGStraightSetup, NeuronSetup, SynapseHomSetup, ConnectionSetup]
+setup_classes = [ISGStraightSetup, NeuronSetup, SynapseHomSetup,
+                 SynapseHomNormSetup, ConnectionSetup]
 
 
 def from_file(path):

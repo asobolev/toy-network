@@ -30,8 +30,8 @@ class SynapseHomNormSetup(SynapseSetup):
             'weight': self.weight,
             'norm_freq': self.norm_freq,
             'norm_fac1': self.norm_fac1,
-            'norm_fac0': self.norm_fac0,
-            }
+            'norm_fac0': self.norm_fac0
+        }
 
 
 class SynapseHomSetup(SynapseSetup):
