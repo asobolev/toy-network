@@ -10,9 +10,6 @@ from reduced.simulation.utils import from_file, parse_to_objects
 from reduced.simulation.plot.dynamics import layer_co_dynamics
 from reduced.simulation.plot.weights import weights_multiple
 
-from configurations import GKLEARN_5X5_0, INPUT_NEURON, MAP_NEURON
-from configurations import HOM_SYNAPSE, FWD_CONN, INH_CONN, EXC_CONN
-
 
 def simulation(network):
 

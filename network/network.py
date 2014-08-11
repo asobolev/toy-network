@@ -33,7 +33,7 @@ class ToyNetwork(object):
 
         targets = [x for x in self._map_layer]
         for neuron in self._input_layer:
-            weights = [float(x) for x in (FWD_CONN.wmax * np.random.rand(len(targets)))]
+            weights = [float(x) for x in (FWD_CONN.weight * np.random.rand(len(targets)))]
             neuron.synapse_with(targets, weights, model='plastic')
 
         # static random inhibitory connections in the map layer
