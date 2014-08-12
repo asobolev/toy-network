@@ -48,3 +48,6 @@ class Synapse(object):
     def items(self):
         return zip(self.keys(), self.values())
 
+    def as_dict(self):
+        return dict([x for x in self.items()])
+

@@ -38,34 +38,50 @@ network_setup = [
 ]
 network = ToyNetwork(*network_setup)
 
-weights_before = np.array(network.input_layer.weights)  # remember original weights
-
 # <headingcell level=3>
 
 # Learning
 
 # <markdowncell>
 
-# Simulate until the weights are converged:
+# Simulation parameters:
 
 # <codecell>
 
+phase = setup_dict['GKLEARN_5X5_0'].i_s_i + setup_dict['GKLEARN_5X5_0'].stimuli_duration
+cycle = 4 * phase  # this input has 4 different stimuli
+
 max_simulation_time = 5000
-time_bin = 5000
 convergence_delta = 5  # criteria for convergence
 
 time_passed = 0
-weights_diff = np.array(network.input_layer.weights)
-previous_weights = np.array(network.input_layer.weights)
 
-while (time_passed < max_simulation_time) and not (weights_diff < convergence_delta).all():
-    nest.Simulate(time_bin)
-    time_passed += time_bin
+# collector for actual synaptic (weights) evolution
+# every element is a list of synapses with actual synaptic values
+spider = []
+
+get_as_dict = lambda synapses: [x.as_dict() for x in synapses]
+get_weights = lambda synapses: [x['weight'] for x in synapses]
+
+spider.append(get_as_dict(network.input_layer.synapses))
+
+weights_diff = np.array(get_weights(spider[0]))
+previous_weights = np.array(get_weights(spider[0]))
+
+# <markdowncell>
+
+# Simulate with cycles equal to one stimulus presentation to record weight evolution. Simulate until the weights are converged:
+
+# <codecell>
+
+# and not (weights_diff < convergence_delta).all()
+
+while (time_passed < max_simulation_time):
+    nest.Simulate(phase)
+    time_passed += phase
     
-    actual_weights = np.array(network.input_layer.weights)
-    weights_diff = np.abs(actual_weights - previous_weights)
-        
-    previous_weights = actual_weights
+    spider.append(get_as_dict(network.input_layer.synapses))
+    weights_diff = np.abs(np.array(get_weights(spider[-1])) - get_weights(spider[-2]))
     
 print time_passed
 
@@ -73,7 +89,16 @@ print time_passed
 
 from reduced.simulation.plot.weights import weights_multiple
 
-weights_after = np.array(network.input_layer.weights)
+def extract_weights_as_2D(synapses):
+    sources = [x['source'] for x in synapses]
+    sources = sorted(set(sources), key=sources.index) 
+
+    source_filter = lambda x: x['source'] == source
+    
+    return [get_weights(filter(source_filter, synapses)) for source in sources]
+
+weights_before = extract_weights_as_2D(spider[0])
+weights_after = extract_weights_as_2D(spider[-1])
 
 fig = weights_multiple([weights_before, weights_after])
 
@@ -104,7 +129,7 @@ from reduced.network.monitors import VoltageMonitor, MonitorPool, SpikeDetector
 #input_monitors = MonitorPool(VoltageMonitor, network.input_layer.nodes)
 #map_monitors = MonitorPool(VoltageMonitor, network.map_layer.nodes)
 
-spike_detector = SpikeDetector(network.map_layer.nodes)
+#spike_detector = SpikeDetector(network.map_layer.nodes)
 
 # <markdowncell>
 
@@ -112,7 +137,7 @@ spike_detector = SpikeDetector(network.map_layer.nodes)
 
 # <codecell>
 
-nest.Simulate(10000)
+#nest.Simulate(10000)
 
 # <markdowncell>
 
@@ -130,9 +155,9 @@ from reduced.simulation.plot.dynamics import layer_co_dynamics
 
 #fig1 = layer_co_dynamics(events_i, events_m, input_monitors[0].times)
 
-fig2 = raster_plot.from_device([spike_detector.id], hist=True)
+#fig2 = raster_plot.from_device([spike_detector.id], hist=True)
 
 # <codecell>
 
-plt.show()
+#plt.show()
 

@@ -10,7 +10,8 @@
 + split setup.models into several modules
 - test network script
 + check for convergence
-- add stimulus object
+- add stimulus object instead of ISG
+- (?) move setup into models
 
 
 
