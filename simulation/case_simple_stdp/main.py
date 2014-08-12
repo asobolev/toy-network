@@ -51,7 +51,7 @@ weights_before = np.array(network.input_layer.weights)  # remember original weig
 # <codecell>
 
 max_simulation_time = 5000
-time_bin = 10000
+time_bin = 5000
 convergence_delta = 5  # criteria for convergence
 
 time_passed = 0
@@ -79,6 +79,18 @@ fig = weights_multiple([weights_before, weights_after])
 
 # <headingcell level=3>
 
+# Single cell analysis
+
+# <codecell>
+
+cell = network.map_layer[2]
+
+print cell.id
+
+[(x['source'], x['weight']) for x in network.input_layer.synapses_for(cell)]
+
+# <headingcell level=3>
+
 # Testing
 
 # <markdowncell>
@@ -100,7 +112,7 @@ spike_detector = SpikeDetector(network.map_layer.nodes)
 
 # <codecell>
 
-nest.Simulate(5000)
+nest.Simulate(10000)
 
 # <markdowncell>
 
@@ -123,11 +135,4 @@ fig2 = raster_plot.from_device([spike_detector.id], hist=True)
 # <codecell>
 
 plt.show()
-
-# <codecell>
-
-[(x['weight'], x['source']) for x in network.input_layer[0].synapses]
-
-# <codecell>
-
 

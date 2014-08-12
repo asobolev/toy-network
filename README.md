@@ -18,3 +18,17 @@ If you got it, you can try if your network also works with 5x5gklearn1.idlmov,
 5x5gklearn2.idlmov etc. 5x5gklearn0.idlmov has zero overlap between the four
 stimuli (stimuli are orthogonal). the Other stimuli have more overlap, and
 thus are a bit more difficult to separate for the network.
+
+
+installing nest
+===============
+
+> cd nest
+> ./bootstrap.sh
+> cp fm_configure as_configure
+
+then  modify as_configure to your needs (change directories for the prefixes)
+
+> ./as_configure
+> make
+> make install

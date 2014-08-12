@@ -93,6 +93,18 @@ class Layer(NestObject):
     def nodes(self):
         return [x.id for x in self._neurons]
 
+    def synapses_for(self, ext_neuron):
+        """
+        Returns all local existing synaptic connections to a given external
+        neuron.
+
+        :param ext_neuron:  external Neuron object
+        :return:            list of Synapse objects
+        """
+        all_synapses = reduce(lambda x, y: x + y.synapses, self, [])
+
+        return filter(lambda syn: syn['target'] == ext_neuron.id, all_synapses)
+
 
 class InputLayer(Layer):
 

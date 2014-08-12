@@ -9,7 +9,8 @@
 + remove base configurations
 + split setup.models into several modules
 - test network script
-- check for convergence
++ check for convergence
+- add stimulus object
 
 
 
