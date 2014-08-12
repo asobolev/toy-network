@@ -124,3 +124,10 @@ fig2 = raster_plot.from_device([spike_detector.id], hist=True)
 
 plt.show()
 
+# <codecell>
+
+[(x['weight'], x['source']) for x in network.input_layer[0].synapses]
+
+# <codecell>
+
+

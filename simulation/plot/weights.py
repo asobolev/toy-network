@@ -24,18 +24,19 @@ def weights_multiple(weights):
         key = 100 + total * 10 + (i+1)  # always horizontal
         ax = fig.add_subplot(key)
 
-        weights_normalized = matrix / g_max
-        im = ax.imshow(weights_normalized, interpolation='nearest', origin='lower')
+        weights_normalized = matrix
+        im = ax.imshow(weights_normalized.T, vmin=g_min, vmax=g_max, interpolation='nearest', origin='lower')
 
-        ax.set_xlabel('map neurons')
-        ax.set_ylabel('input neurons')
+        ax.set_xlabel('input neurons')
+        ax.set_ylabel('map neurons')
 
     try:
         axc = fig.add_axes([0.1, 0.1, 0.8, 0.05])  # setup colorbar axes.
         bar = plt.colorbar(im, cax=axc, orientation='horizontal')
 
-        bar.set_ticks([round((g_min + (x * delta/10.0))/g_max, 2) for x in range(10)])
-        bar.set_ticklabels([str(round(g_min + (x * delta/10.0), 2)) for x in range(10)])
+        labels = [round((g_min + (x * delta/10.0)), 2) for x in range(11)]
+        bar.set_ticks(labels)
+        bar.set_ticklabels([str(x) for x in labels])
 
     except NameError:
         pass
