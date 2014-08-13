@@ -12,6 +12,7 @@
 + check for convergence
 - add stimulus object instead of ISG
 - (?) move setup into models
+- refactor plots: split (generic) rendering algorithms and figures
 
 
 

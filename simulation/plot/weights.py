@@ -4,13 +4,35 @@ import matplotlib.pyplot as plt
 from matplotlib.pyplot import figure
 
 
-def weights_evolution(ax, ax_colorbar, weights):
+def render_colorbar(image, axes, orientation, labels):
     """
-    Creates a figure to plot several weight matrixes.
+    Draws a colorbar on a given axes for a given image.
 
-    :param weights: list of numpy 2D arrays with float values
+    :param image:       image to build colorbar for
+    :param axes:        axes where to render colorbar
+    :param orientation: colorbar orientation, i.e. 'horizontal'
+    :param labels:      float array with labels (11)
     """
-    pass
+    bar = plt.colorbar(image, cax=axes, orientation=orientation)
+
+    bar.set_ticks(labels)
+    bar.set_ticklabels([str(x) for x in labels])
+
+
+def render_rectangular_matrix(axes, weights, xlabel, ylabel):
+    """
+    Draws a weight matrix on a given axes.
+    Adds colorbar to a given colorbar axes (always horizontal).
+
+    :param axes:        axes where to render plot
+    :param weights:     numpy 2D array with weights
+    """
+    im = axes.imshow(weights, interpolation='nearest', origin='lower')
+
+    axes.set_xlabel(xlabel)
+    axes.set_ylabel(ylabel)
+
+    return im
 
 
 def weights_multiple(weights):
