@@ -4,6 +4,15 @@ import matplotlib.pyplot as plt
 from matplotlib.pyplot import figure
 
 
+def weights_evolution(ax, ax_colorbar, weights):
+    """
+    Creates a figure to plot several weight matrixes.
+
+    :param weights: list of numpy 2D arrays with float values
+    """
+    pass
+
+
 def weights_multiple(weights):
     """
     Creates a figure to plot several weight matrixes.
