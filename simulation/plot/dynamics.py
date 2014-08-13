@@ -76,3 +76,16 @@ def layer_co_dynamics(i_events, m_events, times):
         ax.set_ylabel('events (N) with diff %f (ms)' % dr)
 
     return fig
+
+
+def raster_plot(ax, times, senders):
+    """
+    Draws a raster plot of given events (times) with senders on a given axes.
+
+    :param ax:      axes object where to draw
+    :param times:   array of times of events happened
+    :param senders: array of IDs of event senders corresponding to given times
+    """
+    ax.plot(times, senders, '.')
+    ax.set_xlabel('time (ms)')
+    ax.set_xlabel('sender ID')

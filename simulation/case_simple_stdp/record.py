@@ -11,6 +11,7 @@ import h5py
 import numpy as np
 
 from reduced.network.network import ToyNetwork
+from reduced.network.monitors import SpikeDetector
 from reduced.simulation.utils import *
 
 #--------------
@@ -34,9 +35,10 @@ network = ToyNetwork(*network_setup)
 
 phase = setup_dict['GKLEARN_5X5_0'].i_s_i + setup_dict['GKLEARN_5X5_0'].stimuli_duration
 
-max_simulation_time = 15000
+max_simulation_time = 5000
 time_passed = 0
 
+spike_detector = SpikeDetector(network.map_layer.nodes)
 spider = []  # collector for actual synaptic states (weights)
 times = []   # records times when states were collected
 
@@ -64,6 +66,7 @@ weights = np.array([[x['weight'] for x in synapses] for synapses in spider])
 
 with h5py.File('weights.h5', 'w') as f:
     all_synapses = f.create_group('synapses')
+    all_synapses.create_dataset('times', data=np.array(times))
 
     for i, id_pair in enumerate(synapse_ids):
         source, target = id_pair  # source, target are NEST ids
@@ -75,4 +78,6 @@ with h5py.File('weights.h5', 'w') as f:
         syn.attrs.create('source', source)
         syn.attrs.create('target', target)
 
-    f.create_dataset('times', data=np.array(times))
+    all_spikes = f.create_group('spikes')
+    all_spikes.create_dataset('times', data=spike_detector.times)
+    all_spikes.create_dataset('senders', data=spike_detector.senders)

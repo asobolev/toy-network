@@ -1,78 +1,45 @@
+#!/usr/bin/env python
 
 """
-for a small subset of map neurons.
- Plots with
-weight values evolution are created as a result of this analysis.
+Creates a weight evolution figure for a small subset of map neurons. A figure
+contains a raster plot of input layer spiking (top) together with the weight
+evolution map (bottom) for selected neuron(s).
 """
 
-#----------------------------------
-# Plot weights for selected neurons
-#----------------------------------
-
-
-from reduced.simulation.plot.weights import weights_multiple
-
-weights_before = weights_as_matrix(spider[0])
-weights_after = weights_as_matrix(spider[-1])
-
-fig = weights_multiple([weights_before, weights_after])
-
-# <headingcell level=3>
-
-# Single cell analysis
-
-# <codecell>
-
-cell = network.map_layer[2]
-
-print cell.id
-
-[(x['source'], x['weight']) for x in network.input_layer.synapses_for(cell)]
-
-# <headingcell level=3>
-
-# Testing
-
-# <markdowncell>
-
-# Set voltage monitors before the simulation:
-
-# <codecell>
-
-from reduced.network.monitors import VoltageMonitor, MonitorPool, SpikeDetector
-
-#input_monitors = MonitorPool(VoltageMonitor, network.input_layer.nodes)
-#map_monitors = MonitorPool(VoltageMonitor, network.map_layer.nodes)
-
-#spike_detector = SpikeDetector(network.map_layer.nodes)
-
-# <markdowncell>
-
-# Simulate sample interval:
-
-# <codecell>
-
-#nest.Simulate(10000)
-
-# <markdowncell>
-
-# Compare outputs:
-
-# <codecell>
-
+import h5py
 import matplotlib.pyplot as plt
+from matplotlib.pyplot import figure
+from reduced.simulation.plot.weights import weights_multiple
+from reduced.simulation.plot.dynamics import raster_plot
 
-from nest import raster_plot
-from reduced.simulation.plot.dynamics import layer_co_dynamics
 
-#events_i = np.array([vm.V_m for vm in input_monitors])
-#events_m = np.array([vm.V_m for vm in map_monitors])
+# read out all IDs of the map layer neurons
 
-#fig1 = layer_co_dynamics(events_i, events_m, input_monitors[0].times)
+with h5py.File('weights.h5', 'r') as f:
+    datasets = filter(lambda x: 'target' in x.attr.keys(), f['synapses'])
 
-#fig2 = raster_plot.from_device([spike_detector.id], hist=True)
+    targets = [x.attr['target'] for x in datasets]
+    targets = sorted(set(targets), key=targets.index)
 
-# <codecell>
 
-#plt.show()
+target_id = targets[0]  # NEST id of the map layer neuron
+
+title = 'Weight evolution for neuron %s' % str(target_id)
+
+fig = figure(figsize=(15, 10))
+fig.canvas.set_window_title(title)
+
+ax_r = fig.add_subplot(211)  # axes to plot input as raster plot
+ax_w = fig.add_subplot(212)  # axes to plot weight evolution
+
+with h5py.File('weights.h5', 'r') as f:
+    times = f['spikes']['times']
+    senders = f['spikes']['senders']
+
+    raster_plot(ax_r, times, senders)
+
+
+
+
+plt.show()
 
