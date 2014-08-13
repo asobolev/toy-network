@@ -39,11 +39,11 @@ class Synapse(object):
 
     @staticmethod
     def keys():
-        return ['synapse_model', 'target', 'weight', 'Kplus', 'delay', 
-                    'source', 'receptor', 'type']
+        return ('synapse_model', 'target', 'weight', 'Kplus', 'delay',
+                    'source', 'receptor')
 
     def values(self):
-        return [self[key] for key in self.keys()]
+        return (self[key] for key in self.keys())
 
     def items(self):
         return zip(self.keys(), self.values())

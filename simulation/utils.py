@@ -1,3 +1,4 @@
+import numpy as np
 import simplejson as json
 from reduced.setup import *
 
@@ -37,3 +38,19 @@ def parse_to_objects(conf_dict):
             setup_objects[name] = cls(**setup_dict)
 
     return setup_objects
+
+
+def weights_as_matrix(synapse_list):
+    """
+    Extracts a 2D array of weights from a list of given Synapse objects.
+
+    :param synapse_list:    list of Synapse objects
+    :return:                2D numpy array of weights
+    """
+    sources = [x['source'] for x in synapse_list]
+    sources = sorted(set(sources), key=sources.index)
+
+    source_filter = lambda x: x['source'] == source
+    get_weights = lambda synapses: [x['weight'] for x in synapses]
+
+    return np.array([get_weights(filter(source_filter, synapse_list)) for source in sources])
