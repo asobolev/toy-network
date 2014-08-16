@@ -27,7 +27,12 @@ def render_rectangular_matrix(axes, weights, xlabel, ylabel):
     :param axes:        axes where to render plot
     :param weights:     numpy 2D array with weights
     """
-    im = axes.imshow(weights, interpolation='nearest', origin='lower')
+    kwargs = {
+        'interpolation': 'nearest',
+        'origin': 'lower',
+        'aspect': 'auto'
+    }
+    im = axes.imshow(weights, **kwargs)
 
     axes.set_xlabel(xlabel)
     axes.set_ylabel(ylabel)

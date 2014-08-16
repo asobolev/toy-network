@@ -8,6 +8,7 @@ evolution map (bottom) for selected neuron(s).
 
 import h5py
 import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
 import numpy as np
 
 from matplotlib.pyplot import figure
@@ -17,9 +18,13 @@ from reduced.simulation.plot.dynamics import raster_plot
 
 fig = figure(figsize=(15, 10))
 
-ax_r = fig.add_subplot(211)  # axes to plot input as raster plot
-ax_w = fig.add_subplot(212)  # axes to plot weight evolution
-ax_c = fig.add_axes([0.1, 0.1, 0.8, 0.05])  # axes for colorbar
+gs = gridspec.GridSpec(5, 1)
+ax_r = fig.add_subplot(gs[:2, :])
+ax_w = fig.add_subplot(gs[2:4, :])
+
+#ax_r = fig.add_subplot(211)  # axes to plot input as raster plot
+#ax_w = fig.add_subplot(212)  # axes to plot weight evolution
+ax_c = fig.add_axes([0.12, 0.1, 0.78, 0.03])  # axes for colorbar
 
 # render raster plot with input layer spikes
 
@@ -44,7 +49,7 @@ with h5py.File('weights.h5', 'r') as f:
     weights = np.array([np.array(w) for w in datasets])
 
 
-image = render_rectangular_matrix(ax_w, weights, 'time (ms)', 'input neurons')
+image = render_rectangular_matrix(ax_w, weights, 'neuron %s' % selected, 'input neurons')
 
 g_min = weights.min()
 delta = weights.max() - g_min
