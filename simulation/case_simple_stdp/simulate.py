@@ -20,12 +20,13 @@ from reduced.simulation.utils import *
 
 nest.ResetKernel()
 
-setup_dict = parse_to_objects(from_file('configurations.json'))
+setup_dict = parse_to_objects(from_file('configurations1.json'))
 
 network_setup = [
     setup_dict['GKLEARN_5X5_0'], setup_dict['INPUT_NEURON'],
     setup_dict['MAP_NEURON'], setup_dict['HOM_SYNAPSE'],
-    setup_dict['FWD_CONN'], setup_dict['INH_CONN'], setup_dict['EXC_CONN']
+    setup_dict['FWD_CONN'], setup_dict['INH_CONN'], 
+    setup_dict.get('EXC_CONN', None)
 ]
 network = ToyNetwork(*network_setup)
 

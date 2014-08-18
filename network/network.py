@@ -43,15 +43,16 @@ class ToyNetwork(object):
             neuron.synapse_with(some, INH_CONN.weight, model=INH_CONN.model)
 
         # excitatory connections to neighboring neurons
-        for x, row in enumerate(self._map_layer.as_matrix):
-            for y, neuron in enumerate(row):
-                horizontal = (x-1, x, x+1 if x+1 < self._map_layer.x_dim else -1)
-                vertical = (y-1, y, y+1 if y+1 < self._map_layer.y_dim else -1)
-                coords = it.product(horizontal, vertical)
-                coords = filter(lambda q: not q == (x, y), coords)
+        if EXC_CONN:
+            for x, row in enumerate(self._map_layer.as_matrix):
+                for y, neuron in enumerate(row):
+                    horizontal = (x-1, x, x+1 if x+1 < self._map_layer.x_dim else -1)
+                    vertical = (y-1, y, y+1 if y+1 < self._map_layer.y_dim else -1)
+                    coords = it.product(horizontal, vertical)
+                    coords = filter(lambda q: not q == (x, y), coords)
 
-                neighbors = [self._map_layer.as_matrix[i][j] for i, j in coords]
-                neuron.synapse_with(neighbors, EXC_CONN.weight, model=EXC_CONN.model)
+                    neighbors = [self._map_layer.as_matrix[i][j] for i, j in coords]
+                    neuron.synapse_with(neighbors, EXC_CONN.weight, model=EXC_CONN.model)
 
     @property
     def input_layer(self):
