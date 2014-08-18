@@ -35,10 +35,11 @@ network = ToyNetwork(*network_setup)
 
 phase = setup_dict['GKLEARN_5X5_0'].i_s_i + setup_dict['GKLEARN_5X5_0'].stimuli_duration
 
-max_simulation_time = 5000
+max_simulation_time = 15000
 time_passed = 0
 
-spike_detector = SpikeDetector(network.map_layer.nodes)
+spike_detector_input = SpikeDetector(network.input_layer.nodes)
+spike_detector_map = SpikeDetector(network.map_layer.nodes)
 spider = []  # collector for actual synaptic states (weights)
 times = []   # records times when states were collected
 
@@ -78,6 +79,10 @@ with h5py.File('weights.h5', 'w') as f:
         syn.attrs.create('source', source)
         syn.attrs.create('target', target)
 
-    all_spikes = f.create_group('spikes')
-    all_spikes.create_dataset('times', data=spike_detector.times)
-    all_spikes.create_dataset('senders', data=spike_detector.senders)
+    input_spikes = f.create_group('spikes_input')
+    input_spikes.create_dataset('times', data=spike_detector_input.times)
+    input_spikes.create_dataset('senders', data=spike_detector_input.senders)
+
+    map_spikes = f.create_group('spikes_map')
+    map_spikes.create_dataset('times', data=spike_detector_map.times)
+    map_spikes.create_dataset('senders', data=spike_detector_map.senders)

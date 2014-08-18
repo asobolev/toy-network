@@ -2,6 +2,7 @@ import numpy as np
 
 from matplotlib.pyplot import figure
 from matplotlib.collections import LineCollection
+from render.raster import *
 
 
 def multiple_time_series(events, times):
@@ -78,14 +79,18 @@ def layer_co_dynamics(i_events, m_events, times):
     return fig
 
 
-def raster_plot(ax, times, senders):
+def raster_plot(times, senders):
     """
     Draws a raster plot of given events (times) with senders on a given axes.
 
-    :param ax:      axes object where to draw
     :param times:   array of times of events happened
     :param senders: array of IDs of event senders corresponding to given times
+    :return         a raster plot figure
     """
-    ax.plot(times, senders, '.')
-    ax.set_xlabel('time (ms)')
-    ax.set_xlabel('sender ID')
+    fig = figure(figsize=(15, 10))
+    ax = fig.add_subplot(111)
+    ax.set_ylim(senders.min() - 1, senders.max() + 1)
+
+    render_raster(ax, times, senders)
+
+    return fig

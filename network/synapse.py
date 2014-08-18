@@ -39,7 +39,7 @@ class Synapse(object):
 
     @staticmethod
     def keys():
-        return ('synapse_model', 'target', 'weight', 'Kplus', 'delay',
+        return ('synapse_model', 'target', 'weight', 'delay',
                     'source', 'receptor')
 
     def values(self):

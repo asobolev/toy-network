@@ -1,43 +1,6 @@
 import numpy as np
-
-import matplotlib.pyplot as plt
 from matplotlib.pyplot import figure
-
-
-def render_colorbar(image, axes, orientation, labels):
-    """
-    Draws a colorbar on a given axes for a given image.
-
-    :param image:       image to build colorbar for
-    :param axes:        axes where to render colorbar
-    :param orientation: colorbar orientation, i.e. 'horizontal'
-    :param labels:      float array with labels (11)
-    """
-    bar = plt.colorbar(image, cax=axes, orientation=orientation)
-
-    bar.set_ticks(labels)
-    bar.set_ticklabels([str(x) for x in labels])
-
-
-def render_rectangular_matrix(axes, weights, xlabel, ylabel):
-    """
-    Draws a weight matrix on a given axes.
-    Adds colorbar to a given colorbar axes (always horizontal).
-
-    :param axes:        axes where to render plot
-    :param weights:     numpy 2D array with weights
-    """
-    kwargs = {
-        'interpolation': 'nearest',
-        'origin': 'lower',
-        'aspect': 'auto'
-    }
-    im = axes.imshow(weights, **kwargs)
-
-    axes.set_xlabel(xlabel)
-    axes.set_ylabel(ylabel)
-
-    return im
+from render.matrix import *
 
 
 def weights_multiple(weights):
@@ -49,6 +12,11 @@ def weights_multiple(weights):
 
     fig = figure(figsize=(11, 7))
     fig.canvas.set_window_title('Weights input - map layers')
+
+    # potentially using GridSpec for alignments
+    #gs = gridspec.GridSpec(5, 1)
+    #ax_r = fig.add_subplot(gs[:2, :])
+    #ax_w = fig.add_subplot(gs[2:4, :])
 
     to_plot = np.array(weights)
     total = len(to_plot)
@@ -82,9 +50,9 @@ def weights_multiple(weights):
 
 def neuron_ids_in_layer(layer):
     """
-    Creates an image with neuron ids from a given layer.
+    Creates an image with neuron ids as colors from a given layer.
 
-    :param weights: list of numpy 2D arrays with float values
+    :param layer:   a Layer object
     """
     ids = [map(lambda x: float(getattr(x, 'id')), column) for column in layer.as_matrix]
     matrix = np.array(ids)
@@ -102,5 +70,29 @@ def neuron_ids_in_layer(layer):
     bar = fig.colorbar(im)
     bar.set_ticks([round((w_min + (x * delta/10.0))/w_max, 2) for x in range(10)])
     bar.set_ticklabels([str(round(w_min + (x * delta/10.0), 2)) for x in range(10)])
+
+    return fig
+
+
+def single_weight_evolution(weights, neuron_id):
+    """
+    Creates a weight evolution figure for particular map neuron.
+
+    :param weights: numpy 2D array with float values
+    """
+    fig = figure(figsize=(15, 10))
+
+    #ax_w = fig.add_subplot(111)
+    ax_w = fig.add_axes([0.12, 0.2, 0.78, 0.75])
+    ax_w.grid()
+    xlabel = 'time steps'
+    ylabel = 'input neurons'
+    image = render_rectangular_matrix(ax_w, weights, xlabel, ylabel)
+
+    ax_c = fig.add_axes([0.12, 0.1, 0.78, 0.03])  # axes for colorbar
+    cbar = render_colorbar(ax_c, image, 'horizontal', weights.min(), weights.max())
+
+    title = 'Weight evolution for neuron %s' % str(neuron_id)
+    fig.canvas.set_window_title(title)
 
     return fig
