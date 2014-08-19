@@ -11,7 +11,7 @@
 
 # <markdowncell>
 
-# All configurations for neurons, connections and synapses are located in the configurations.json (JSON) file in the case folder.
+# All configurations for neurons, connections and synapses are located in the 01.json (JSON) file in the case folder.
 
 # <headingcell level=3>
 
@@ -33,7 +33,7 @@ from reduced.simulation.utils import from_file, parse_to_objects
 
 nest.ResetKernel()
 
-setup_dict = parse_to_objects(from_file('configurations.json'))
+setup_dict = parse_to_objects(from_file('01.json'))
 
 network_setup = [
     setup_dict['GKLEARN_5X5_0'], setup_dict['INPUT_NEURON'],

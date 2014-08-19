@@ -81,7 +81,6 @@ if 0:
         pass
 
 
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Analyse')
 
