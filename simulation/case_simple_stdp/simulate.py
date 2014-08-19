@@ -7,7 +7,6 @@ after every stimulus presentation.
 """
 
 import nest
-import h5py
 import numpy as np
 
 from reduced.network.network import ToyNetwork
@@ -73,33 +72,3 @@ dumper.dump_synapse_snapshots(times, spider)
 
 dump_voltage = lambda m: dumper.dump_voltage_trace(m.observable, m.times, m.V_m)
 map(dump_voltage, map_monitors)
-
-
-"""
-synapse_sample = spider[0]
-synapse_ids = [(x['source'], x['target']) for x in synapse_sample]
-
-weights = np.array([[x['weight'] for x in synapses] for synapses in spider])
-
-with h5py.File('weights.h5', 'w') as f:
-    all_synapses = f.create_group('synapses')
-    all_synapses.create_dataset('times', data=np.array(times))
-
-    for i, id_pair in enumerate(synapse_ids):
-        source, target = id_pair  # source, target are NEST ids
-
-        name = "%s-%s" % (str(source), str(target))
-        data = [x[i] for x in weights]
-        syn = all_synapses.create_dataset(name, data=data)
-
-        syn.attrs.create('source', source)
-        syn.attrs.create('target', target)
-
-    input_spikes = f.create_group('spikes_input')
-    input_spikes.create_dataset('times', data=spike_detector_i.times)
-    input_spikes.create_dataset('senders', data=spike_detector_i.senders)
-
-    map_spikes = f.create_group('spikes_map')
-    map_spikes.create_dataset('times', data=spike_detector_m.times)
-    map_spikes.create_dataset('senders', data=spike_detector_m.senders)
-"""

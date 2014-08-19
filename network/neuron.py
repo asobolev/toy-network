@@ -33,8 +33,11 @@ class Neuron(NestObject):
 
         :return:    list of Synapse objects (includes synapse with Layer)
         """
+        connections = nest.GetConnections([self.id])
 
-        # TODO exclude connection with Layer
-        # TODO remove NEST message like <lockPTR[3]->dictionarytype(0x67e9fa0)>
-        nodes = nest.GetConnections([self.id])
-        return [Synapse(*list(node)) for node in nodes]
+        # define a filter for non-neuron connections (spike detectors etc.)
+        get_conn_type = lambda conn: nest.GetStatus([conn[1]], 'node_type')[0]
+        is_synapse = lambda conn: get_conn_type(conn).name == 'neuron'
+
+        synaptic_connections = filter(is_synapse, connections)
+        return [Synapse(*list(node)) for node in synaptic_connections]
