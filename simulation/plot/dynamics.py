@@ -93,4 +93,7 @@ def raster_plot(times, senders):
 
     render_raster(ax, times, senders)
 
+    title = 'Spike events'
+    fig.canvas.set_window_title(title)
+
     return fig

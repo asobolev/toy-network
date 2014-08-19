@@ -30,6 +30,8 @@ class MonitorPool(object):
 class VoltageMonitor(NestObject):
 
     def __init__(self, nest_node_id):
+        self.observable = nest_node_id
+
         rec_params = {'record_from': ['V_m'], 'withtime': True}
 
         self._nest_id = nest.Create('multimeter', params=rec_params)[0]
@@ -55,6 +57,7 @@ class VoltageMonitor(NestObject):
 class SpikeDetector(NestObject):
 
     def __init__(self, nest_node_ids):
+        self.observables = nest_node_ids
 
         self._nest_id = nest.Create('spike_detector')[0]
         nest.ConvergentConnect(nest_node_ids, [self._nest_id])

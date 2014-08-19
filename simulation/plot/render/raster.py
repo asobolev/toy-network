@@ -9,5 +9,5 @@ def render_raster(ax, times, senders):
     """
     ax.plot(times, senders, '.')
     ax.set_xlabel('time (ms)')
-    ax.set_xlabel('sender ID')
+    ax.set_ylabel('sender ID')
     ax.grid()

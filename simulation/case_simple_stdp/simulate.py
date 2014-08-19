@@ -11,8 +11,9 @@ import h5py
 import numpy as np
 
 from reduced.network.network import ToyNetwork
-from reduced.network.monitors import SpikeDetector
+from reduced.network.monitors import SpikeDetector, VoltageMonitor, MonitorPool
 from reduced.simulation.utils import *
+from reduced.simulation.dump import Dumper
 
 #--------------
 # Network setup
@@ -36,11 +37,12 @@ network = ToyNetwork(*network_setup)
 
 phase = setup_dict['GKLEARN_5X5_0'].i_s_i + setup_dict['GKLEARN_5X5_0'].stimuli_duration
 
-max_simulation_time = 15000
+max_simulation_time = 1000
 time_passed = 0
 
-spike_detector_input = SpikeDetector(network.input_layer.nodes)
-spike_detector_map = SpikeDetector(network.map_layer.nodes)
+spike_detector_i = SpikeDetector(network.input_layer.nodes)
+spike_detector_m = SpikeDetector(network.map_layer.nodes)
+map_monitors = MonitorPool(VoltageMonitor, network.map_layer.nodes)
 spider = []  # collector for actual synaptic states (weights)
 times = []   # records times when states were collected
 
@@ -61,6 +63,19 @@ while time_passed < max_simulation_time:
 # Dump synaptic data
 #-------------------
 
+dumper = Dumper('weights.h5', 'w')
+
+dumper.dump_input_spikes(spike_detector_i.times, spike_detector_i.senders)
+
+dumper.dump_map_spikes(spike_detector_m.times, spike_detector_m.senders)
+
+dumper.dump_synapse_snapshots(times, spider)
+
+dump_voltage = lambda m: dumper.dump_voltage_trace(m.observable, m.times, m.V_m)
+map(dump_voltage, map_monitors)
+
+
+"""
 synapse_sample = spider[0]
 synapse_ids = [(x['source'], x['target']) for x in synapse_sample]
 
@@ -81,9 +96,10 @@ with h5py.File('weights.h5', 'w') as f:
         syn.attrs.create('target', target)
 
     input_spikes = f.create_group('spikes_input')
-    input_spikes.create_dataset('times', data=spike_detector_input.times)
-    input_spikes.create_dataset('senders', data=spike_detector_input.senders)
+    input_spikes.create_dataset('times', data=spike_detector_i.times)
+    input_spikes.create_dataset('senders', data=spike_detector_i.senders)
 
     map_spikes = f.create_group('spikes_map')
-    map_spikes.create_dataset('times', data=spike_detector_map.times)
-    map_spikes.create_dataset('senders', data=spike_detector_map.senders)
+    map_spikes.create_dataset('times', data=spike_detector_m.times)
+    map_spikes.create_dataset('senders', data=spike_detector_m.senders)
+"""
