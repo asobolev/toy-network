@@ -36,6 +36,8 @@ def multiple_time_series(events, times):
     ax.set_xlabel('time (ms)')
     ax.set_ylabel('events (N) with diff %f (ms)' % dr)
 
+    ax.grid()
+
     return fig
 
 

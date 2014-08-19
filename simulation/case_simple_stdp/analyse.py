@@ -1,18 +1,22 @@
 #!/usr/bin/env python
 
 """
-Creates a weight evolution figure for a small subset of map neurons. A figure
-contains a raster plot of input layer spiking (top) together with the weight
-evolution map (bottom) for selected neuron(s).
+Creates several plots according to a results of a simulation.
+
+Example:
+
+./analyse.py --file weights.h5 -w -r "map"
+
+./analyse.py --file weights.h5 -w -t1=0 -t2=25
+
 """
 
 import argparse
-import h5py
 import numpy as np
 
 from reduced.simulation.utils import with_data
 from reduced.simulation.plot.weights import *
-from reduced.simulation.plot.dynamics import raster_plot
+from reduced.simulation.plot.dynamics import raster_plot, multiple_time_series
 
 
 @with_data
@@ -47,7 +51,7 @@ def raster(f, map_or_input='map'):
     :param map_or_input:    'map' or 'input'
     """
     times = f['spikes_%s' % map_or_input]['times']
-    senders = f['spikes_%s' % map_or_input]['senders']
+    senders = f['spikes_%s' % map_or_input]['values']
 
     return raster_plot(np.array(times), np.array(senders))
 
@@ -73,12 +77,21 @@ def weight_dynamics_for_single(f, target_index=0):
     return single_weight_evolution(weights, str(selected))
 
 
-# voltage dynamics of a particular neuron
+@with_data
+def time_series(f, neuron_id):
+    """
+    Voltage dynamics of a particular neuron
 
-if 0:
-    with h5py.File('weights.h5', 'r') as f:
-        #multiple_time_series(events, times)
-        pass
+    :param f:           file path with recorded weights data
+    :param neuron_id:   nest ID of the neuron
+    :return:
+    """
+    neuron = f['voltage'][str(neuron_id)]
+
+    times = np.array(neuron['times'])
+    events = np.array([neuron['values'], neuron['values']])
+
+    return multiple_time_series(events, times)
 
 
 if __name__ == '__main__':
@@ -92,11 +105,19 @@ if __name__ == '__main__':
 
     parser.add_argument('-r, --raster', dest='raster', type=str)
 
+    parser.add_argument('-d, --dynamics', dest='dynamics', type=int)
+
+    parser.add_argument('-v, --voltage', dest='voltage', type=int)
+
     args = parser.parse_args()
     if args.weights:
         weights_before_and_after(args.file, t1=args.t1, t2=args.t2)
     if args.raster:
         raster(args.file, map_or_input=args.raster)
+    if args.dynamics:
+        weight_dynamics_for_single(args.file, target_index=args.dynamics)
+    if args.voltage:
+        time_series(args.file, neuron_id=args.voltage)
 
     plt.show()
 
