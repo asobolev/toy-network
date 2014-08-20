@@ -12,13 +12,14 @@ Example:
 """
 
 import nest
+import nix
 import argparse
 import numpy as np
 
 from reduced.network.network import ToyNetwork
 from reduced.network.monitors import SpikeDetector, VoltageMonitor, MonitorPool
 from reduced.simulation.utils import *
-from reduced.simulation.dump import Dumper
+from reduced.simulation.dump import NixDumper
 
 
 def simulate(simulation_time, config_path, output_path):
@@ -52,7 +53,7 @@ def simulate(simulation_time, config_path, output_path):
     spike_detector_m = SpikeDetector(network.map_layer.nodes)
     map_monitors = MonitorPool(VoltageMonitor, network.map_layer.nodes)
     spider = []  # collector for actual synaptic states (weights)
-    times = []   # records times when states were collected
+    syn_times = []   # records times when states were collected
 
     get_as_dict = lambda synapses: [x.as_dict() for x in synapses]
 
@@ -65,22 +66,42 @@ def simulate(simulation_time, config_path, output_path):
         time_passed += phase
 
         spider.append(get_as_dict(network.input_layer.synapses))
-        times.append(time_passed)
+        syn_times.append(time_passed)
 
     #-------------------
     # Dump synaptic data
     #-------------------
 
-    dumper = Dumper(output_path, 'w')
+    block_name = 'simulation'
+    with NixDumper(output_path, nix.FileMode.Overwrite) as nd:
+        nd.create_block(block_name, network.input_layer, network.map_layer)
 
-    dumper.dump_input_spikes(spike_detector_i.times, spike_detector_i.senders)
+        def dump_spikes(events, senders):
+            neuron_ids = set(senders)
+            for nest_id in neuron_ids:
+                indexes = np.where(senders == nest_id)
+                nd.dump_spiketrain(block_name, nest_id, events[indexes])
 
-    dumper.dump_map_spikes(spike_detector_m.times, spike_detector_m.senders)
+        # dump spike events
+        dump_spikes(spike_detector_i.times, spike_detector_i.senders)
+        dump_spikes(spike_detector_m.times, spike_detector_m.senders)
 
-    dumper.dump_synapse_snapshots(times, spider)
+        # dump voltage traces
+        for m in map_monitors:
+            nd.dump_analogsignal(block_name, m.observable, m.times, m.V_m)
 
-    dump_voltage = lambda m: dumper.dump_voltage_trace(m.observable, m.times, m.V_m)
-    map(dump_voltage, map_monitors)
+        # dump synapses
+        synapse_sample = spider[0]
+        synapse_ids = [(x['source'], x['target']) for x in synapse_sample]
+
+        times = np.array(syn_times)
+        weights = np.array([[x['weight'] for x in synapses] for synapses in spider])
+
+        for i, id_pair in enumerate(synapse_ids):
+            source, target = id_pair  # source, target are NEST ids
+
+            data = [x[i] for x in weights]
+            nd.dump_synapse(block_name, source, target, times, data)
 
 
 if __name__ == '__main__':
