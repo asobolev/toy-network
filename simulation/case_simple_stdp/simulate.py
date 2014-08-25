@@ -12,7 +12,6 @@ Example:
 """
 
 import nest
-import nix
 import argparse
 import numpy as np
 
@@ -73,16 +72,23 @@ def simulate(simulation_time, config_path, output_path):
     #-------------------
 
     block_name = 'simulation'
-    with NixDumper(output_path, nix.FileMode.Overwrite) as nd:
+    with NixDumper(output_path, NixDumper.mode['overwrite']) as nd:
         nd.create_block(block_name, network.input_layer, network.map_layer)
 
+        # create stimulus
+        positions = [phase * i for i in range(int(time_passed / phase))]
+        extents = [i_s_i for i in range(len(positions))]
+        stimulus = [float(i % 4) + 1 for i in range(len(positions))]
+
+        nd.dump_stimulus(block_name, positions, extents, stimulus)
+
+        # dump spike events
         def dump_spikes(events, senders):
             neuron_ids = set(senders)
             for nest_id in neuron_ids:
                 indexes = np.where(senders == nest_id)
                 nd.dump_spiketrain(block_name, nest_id, events[indexes])
 
-        # dump spike events
         dump_spikes(spike_detector_i.times, spike_detector_i.senders)
         dump_spikes(spike_detector_m.times, spike_detector_m.senders)
 
