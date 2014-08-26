@@ -33,9 +33,6 @@ def execute():
     nest.Connect(input_neuron, output_neuron, **kwargs)
     connection = nest.GetConnections(input_neuron, output_neuron)
 
-    import ipdb
-    ipdb.set_trace()
-
     # voltmeters setup
     monitors = []
     rec_params = {'record_from': ['V_m'], 'withtime': True}
