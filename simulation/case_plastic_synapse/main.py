@@ -26,11 +26,8 @@ def execute():
     # plastic connection
     nest.CopyModel('stdp_synapse_hom', 'plastic', {'alpha': 0.1, 'Wmax': 1000.})
 
-    kwargs = {
-        'params': {'weight': 200.},
-        'model': 'plastic',
-    }
-    nest.Connect(input_neuron, output_neuron, **kwargs)
+    syn_spec = {'weight': 200., 'model': 'plastic'}
+    nest.Connect(input_neuron, output_neuron, syn_spec=syn_spec)
     connection = nest.GetConnections(input_neuron, output_neuron)
 
     # voltmeters setup
