@@ -5,7 +5,7 @@ Creates several plots according to a results of a simulation.
 
 Example:
 
-./analyse.py --file weights.h5 -w -r "map"
+./analyse.py --file weights.h5 -w -r
 
 ./analyse.py --file weights.h5 -w -t1=0 -t2=25
 
@@ -14,10 +14,31 @@ Example:
 import argparse
 import numpy as np
 
-from reduced.simulation.utils import with_data
+from reduced.simulation.dump import NixDumper
 from reduced.simulation.plot.weights import *
 from reduced.simulation.plot.dynamics import raster_plot, multiple_time_series
 
+
+# ----------------
+# Helper functions
+# ----------------
+
+def with_data(func):
+    """
+    A decorator that open an HDF5 file and passes an open File descriptor to a
+    decorate func.
+
+    :param func: function that needs an opened File
+    """
+    def func_with_data(path, **kwargs):
+        with NixDumper(path, NixDumper.mode['readonly']) as f:
+            return func(f, **kwargs)
+    return func_with_data
+
+
+# ------------------
+# Analysis functions
+# ------------------
 
 @with_data
 def weights_before_and_after(f, t1=0, t2=-1):
@@ -28,13 +49,18 @@ def weights_before_and_after(f, t1=0, t2=-1):
     :param t1:  first timepoint as int
     :param t2:  second timepoint as int
     """
-    all_datasets = filter(lambda x: 'target' in x.attrs.keys(), f['synapses'].values())
+    block = f._nf.blocks[0]
 
-    sources = [x.attrs['source'] for x in all_datasets]
-    sources = sorted(set(sources), key=sources.index)
-    source_filter = lambda src: filter(lambda x: x.attrs['source'] == src, all_datasets)
+    input_neurons = f.get_neurons_for_layer(block.name, 'input_layer')
+    source_names = [x.name for x in input_neurons]
 
-    weights_at_time = lambda t: [[w[t] for w in source_filter(src)] for src in sources]
+    is_synapse = lambda x: x.type == 'synapse'
+    all_synapses = filter(is_synapse, block.data_arrays)
+
+    has_source = lambda x, src: filter(lambda y: y.name == src, x.sources)
+    syn_filter = lambda src: filter(lambda x: has_source(x, src), all_synapses)
+
+    weights_at_time = lambda t: [[w.data[t] for w in syn_filter(src)] for src in source_names]
 
     weights_before = weights_at_time(t1)
     weights_after = weights_at_time(t2)
@@ -43,15 +69,23 @@ def weights_before_and_after(f, t1=0, t2=-1):
 
 
 @with_data
-def raster(f, map_or_input='map'):
+def raster(f):
     """
-    Render raster plot for spikes for a given layer
+    Render raster plot for all spiketrains in a file
 
     :param f:               file path with recorded weights data
-    :param map_or_input:    'map' or 'input'
     """
-    times = f['spikes_%s' % map_or_input]['times']
-    senders = f['spikes_%s' % map_or_input]['values']
+    block = f._nf.blocks[0]
+
+    is_spiketrain = lambda x: x.type == 'spiketrain'
+    spiketrains = filter(is_spiketrain, block.data_arrays)
+
+    times = reduce(lambda x, y: x + list(y.data[:]), spiketrains, [])
+
+    senders = []
+    for st in spiketrains:
+        name = st.sources[0].name
+        senders += [int(name) for i in range(len(st.data))]
 
     return raster_plot(np.array(times), np.array(senders))
 
@@ -103,7 +137,7 @@ if __name__ == '__main__':
     parser.add_argument('-t1', type=int, default=0)
     parser.add_argument('-t2', type=int, default=-1)
 
-    parser.add_argument('-r, --raster', dest='raster', type=str)
+    parser.add_argument('-r, --raster', dest='raster', action='store_true')
 
     parser.add_argument('-d, --dynamics', dest='dynamics', type=int)
 
@@ -113,7 +147,7 @@ if __name__ == '__main__':
     if args.weights:
         weights_before_and_after(args.file, t1=args.t1, t2=args.t2)
     if args.raster:
-        raster(args.file, map_or_input=args.raster)
+        raster(args.file)
     if args.dynamics:
         weight_dynamics_for_single(args.file, target_index=args.dynamics)
     if args.voltage:

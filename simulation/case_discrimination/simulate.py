@@ -31,12 +31,10 @@ def simulate(simulation_time, config_path, output_path):
 
     setup_dict = parse_to_objects(from_file(config_path))
 
-    network_setup = [
-        setup_dict['GKLEARN_5X5_0'], setup_dict['INPUT_NEURON'],
-        setup_dict['MAP_NEURON'], setup_dict['HOM_SYNAPSE'],
-        setup_dict['FWD_CONN'], setup_dict['INH_CONN'],
-        setup_dict.get('EXC_CONN', None)
-    ]
+    param_names = ['GKLEARN_5X5_0', 'INPUT_NEURON', 'MAP_NEURON', 'HOM_SYNAPSE',
+                   'FWD_CONN', 'INH_CONN', 'EXC_CONN']
+
+    network_setup = [setup_dict.get(x, None) for x in param_names]
     network = ToyNetwork(*network_setup)
 
     #---------

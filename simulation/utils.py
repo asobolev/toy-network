@@ -55,16 +55,3 @@ def weights_as_matrix(synapse_list):
     get_weights = lambda synapses: [x['weight'] for x in synapses]
 
     return np.array([get_weights(filter(source_filter, synapse_list)) for source in sources])
-
-
-def with_data(func):
-    """
-    A decorator that open an HDF5 file and passes an open File descriptor to a
-    decorate func.
-
-    :param func: function that needs an open File
-    """
-    def func_with_data(path, **kwargs):
-        with h5py.File(path, 'r') as f:
-            return func(f, **kwargs)
-    return func_with_data
