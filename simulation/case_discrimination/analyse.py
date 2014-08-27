@@ -97,7 +97,7 @@ def weight_dynamics_for_single(f, t1, t2, target_index=0):
 
     weights = weights.data[:,target_index,find_nearest(t1):find_nearest(t2)]
 
-    return single_weight_evolution(weights, str(target_d[target_index]))
+    return single_weight_evolution(weights, str(target_d.ticks[target_index]))
 
 
 def raster(f, t1, t2):
@@ -123,7 +123,6 @@ def raster(f, t1, t2):
     return raster_plot(np.array(times), np.array(senders))
 
 
-@with_data
 def time_series(f, t1, t2):
     """
     Render Voltage dynamics of all analogsignals in a file
