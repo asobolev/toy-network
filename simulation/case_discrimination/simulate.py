@@ -96,16 +96,19 @@ def simulate(simulation_time, config_path, output_path):
 
         # dump synapses
         synapse_sample = spider[0]
-        synapse_ids = [(x['source'], x['target']) for x in synapse_sample]
 
+        sources = np.array(sorted(set([int(x['source']) for x in synapse_sample])))
+        targets = np.array(sorted(set([int(x['target']) for x in synapse_sample])))
         times = np.array(syn_times)
-        weights = np.array([[x['weight'] for x in synapses] for synapses in spider])
 
-        for i, id_pair in enumerate(synapse_ids):
-            source, target = id_pair  # source, target are NEST ids
+        weight_matrix = np.zeros((len(sources), len(targets), len(times)))
+        for t, snapshot in enumerate(spider):
+            for synapse in snapshot:
+                i = np.where(sources == int(synapse['source']))[0][0]
+                j = np.where(targets == int(synapse['target']))[0][0]
+                weight_matrix[i][j][t] = synapse['weight']
 
-            data = [x[i] for x in weights]
-            nd.dump_synapse(block_name, source, target, times, data)
+        nd.dump_weights(block_name, sources, targets, times, weight_matrix)
 
 
 if __name__ == '__main__':

@@ -136,32 +136,29 @@ class NixDumper(object):
 
         return spiketrain
 
-    def dump_synapse(self, block_name, source, target, times, weights):
+    def dump_weights(self, block_name, sources, targets, times, weights):
         """
-        Saves synapse weight dynamics.
+        Saves synaptic weight dynamics as 3D matrix.
 
-        :param block_name:  where to create a signal
-        :param source:      NEST ID of the source neuron
-        :param target:      NEST ID of the target neuron
-        :param times:       time domain
-        :param weights:     actual weight values
-        :return             created synapse as DataArray object
+        :param block_name:  where to create weight matrix
+        :param sources:     list of source neuron NEST IDs (int)
+        :param targets:     list of target neuron NEST IDs (int)
+        :param times:       time domain (floats)
+        :param weights:     actual weight values (floats)
+        :return:            created weight matrix as DataArray object
         """
         block = self.get_block_by_name(block_name)
-        source_neuron = self.get_neuron_by_name(block_name, source)
-        target_neuron = self.get_neuron_by_name(block_name, target)
 
-        name = "%s-%s" % (str(source), str(target))
-        iargs = [name, 'synapse', nix.DataType.Float, (len(weights),)]
-        synapse = block.create_data_array(*iargs)
+        wargs = ['weights', 'synapses', nix.DataType.Float, weights.shape]
+        matrix = block.create_data_array(*wargs)
 
-        synapse.data[:] = weights
-        synapse.append_range_dimension(times)
-        synapse.dimensions[0].unit = 'ms'
-        synapse.sources.append(source_neuron)
-        synapse.sources.append(target_neuron)
+        matrix.data[:] = weights
+        matrix.append_range_dimension(sources)
+        matrix.append_range_dimension(targets)
+        matrix.append_range_dimension(times)
+        matrix.dimensions[2].unit = 'ms'
 
-        return synapse
+        return matrix
 
 
 def with_file_access(file_mode):

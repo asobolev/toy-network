@@ -1,9 +1,8 @@
 # TODO
 
-- integrate VoltageMonitors into neurons
-- (?) make weight plot functions accept axes and drow on them, thus making
+- make weight plot functions accept axes and drow on them, thus making
     several plots on the same figure possible
-- (?) create a small network object
++ create a small network object
 - use ipynb for demos, print configurations (add repr to basesetup? as_dict)
 + check dimensions for the weights plot
 + remove base configurations
@@ -15,12 +14,17 @@
 - refactor plots: split (generic) rendering algorithms and figures
 - use Neuron init method to create neurons, not CreateLayer
 - make t1 - t2 for all plots in analysis
+- dump weights as matrix
+
+
+cancelled:
+- integrate VoltageMonitors into neurons
 
 
 
 # NEST overall comments
 
-- functions accept objects of different types (like Connect etc.) you can put
+- functions accept objects of arbitrary types (like Connect etc.) you can put
     whatever garbage in there
 - all parameters are just nested dicts (hey, why do we have OOP?) why don't we
     write a single function called run() and pass all parameters as dict there?

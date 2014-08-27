@@ -1,7 +1,7 @@
 {
     "ISGStraightSetup": {
         "GKLEARN_5X5_0": {
-            "stimuli_duration": 50.0,
+            "stimuli_duration": 200.0,
             "i_s_i": 50.0,
             "movie_path": "../../data/5x5gklearn0.idlmov"
         }
@@ -30,7 +30,7 @@
     "ConnectionSetup": {
         "FWD_CONN": {
             "model": "stdp_pl_norm_synapse_hom",
-            "weight": 5
+            "weight": 100
         },
         "INH_CONN": {
             "model": "static_synapse",
