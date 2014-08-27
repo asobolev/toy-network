@@ -43,7 +43,7 @@ def simulate(simulation_time, config_path, output_path):
 
     i_s_i = setup_dict['GKLEARN_5X5_0'].i_s_i
     stimuli_duration = setup_dict['GKLEARN_5X5_0'].stimuli_duration
-    phase = + i_s_i + stimuli_duration
+    phase = i_s_i + stimuli_duration
     time_passed = 0
 
     spike_detector_i = SpikeDetector(network.input_layer.nodes)
@@ -71,7 +71,7 @@ def simulate(simulation_time, config_path, output_path):
 
     block_name = 'simulation'
     with NixDumper(output_path, NixDumper.mode['overwrite']) as nd:
-        nd.create_block(block_name, network.input_layer, network.map_layer)
+        nd.create_block(block_name, time_passed, network.input_layer, network.map_layer)
 
         # create stimulus
         positions = [phase * i for i in range(int(time_passed / phase))]

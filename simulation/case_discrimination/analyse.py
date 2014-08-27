@@ -3,11 +3,24 @@
 """
 Creates several plots according to a results of a simulation.
 
+Usage: ./analyse.py --file <file_name> [-t1] [-t2] [-w] [-r] [-d] [-v]
+
+Arguments:
+'--file', type=str, default='weights.h5'
+
+'-t1', type=int, default=0      start time
+'-t2', type=int, default=0      end time
+
+'-w, --weights'                 plot weights at times t1, t2
+'-r, --raster'                  plot all spiketrains
+'-v, --voltage'                 plot voltage dynamics
+'-d, --dynamics', type=int      plot weight dynamics for a neuron with ID
+
 Example:
 
 ./analyse.py --file weights.h5 -w -r
 
-./analyse.py --file weights.h5 -w -t1=0 -t2=25
+./analyse.py --file weights.h5 -w -t1=0 -t2=2500
 
 """
 
@@ -40,42 +53,62 @@ def with_data(func):
 # Analysis functions
 # ------------------
 
-@with_data
-def weights_before_and_after(f, t1=0, t2=-1):
+def weights_before_and_after(f, t1, t2):
     """
     Plots actual weights between input and map at two points in time
 
-    :param f:   file path with recorded weights data
-    :param t1:  first timepoint as int
-    :param t2:  second timepoint as int
+    :param f:   NixDumper instance with recorded weights data
+    :param t1:  start time (int)
+    :param t2:  end time (int)
     """
-    block = f._nf.blocks[0]
+    block = f.blocks[0]
 
-    input_neurons = f.get_neurons_for_layer(block.name, 'input_layer')
-    source_names = [x.name for x in input_neurons]
+    weights = filter(lambda x: x.type == 'synapses', block.data_arrays)[0]
 
-    is_synapse = lambda x: x.type == 'synapse'
-    all_synapses = filter(is_synapse, block.data_arrays)
+    time_d = filter(lambda x: x.label == 'time', weights.dimensions)[0]
+    times = np.array(time_d.ticks)
 
-    has_source = lambda x, src: filter(lambda y: y.name == src, x.sources)
-    syn_filter = lambda src: filter(lambda x: has_source(x, src), all_synapses)
+    find_nearest = lambda t: int((np.abs(times - t)).argmin())
 
-    weights_at_time = lambda t: [[w.data[t] for w in syn_filter(src)] for src in source_names]
-
-    weights_before = weights_at_time(t1)
-    weights_after = weights_at_time(t2)
+    weights_before = weights.data[:,:,find_nearest(t1)]
+    weights_after = weights.data[:,:,find_nearest(t2)]
 
     return weights_multiple([weights_before, weights_after])
 
 
-@with_data
-def raster(f):
+def weight_dynamics_for_single(f, t1, t2, target_index=0):
+    """
+    Render weight dynamics for a particular map layer neuron
+
+    :param f:               NixDumper instance with recorded weights data
+    :param t1:              start time (int)
+    :param t2:              end time (int)
+    :param target_index:    index of the map layer neuron to plot weights for
+    """
+    block = f.blocks[0]
+
+    weights = filter(lambda x: x.type == 'synapses', block.data_arrays)[0]
+
+    target_d = filter(lambda x: x.label == 'targets', weights.dimensions)[0]
+    time_d = filter(lambda x: x.label == 'time', weights.dimensions)[0]
+    times = np.array(time_d.ticks)
+
+    find_nearest = lambda t: int((np.abs(times - t)).argmin())
+
+    weights = weights.data[:,target_index,find_nearest(t1):find_nearest(t2)]
+
+    return single_weight_evolution(weights, str(target_d[target_index]))
+
+
+def raster(f, t1, t2):
     """
     Render raster plot for all spiketrains in a file
 
-    :param f:               file path with recorded weights data
+    :param f:   NixDumper instance with recorded weights data
+    :param t1:  start time (int)
+    :param t2:  end time (int)
     """
-    block = f._nf.blocks[0]
+    block = f.blocks[0]
 
     is_spiketrain = lambda x: x.type == 'spiketrain'
     spiketrains = filter(is_spiketrain, block.data_arrays)
@@ -91,39 +124,20 @@ def raster(f):
 
 
 @with_data
-def weight_dynamics_for_single(f, target_index=0):
+def time_series(f, t1, t2):
     """
-    Render weight dynamics for a particular map layer neuron
+    Render Voltage dynamics of all analogsignals in a file
 
-    :param f:               file path with recorded weights data
-    :param target_index:    index of the map layer neuron to plot weights for
+    :param f:   NixDumper instance with recorded weights data
+    :param t1:  start time (int)
+    :param t2:  end time (int)
     """
-    all_datasets = filter(lambda x: 'target' in x.attrs.keys(), f['synapses'].values())
+    block = f.blocks[0]
 
-    targets = [x.attrs['target'] for x in all_datasets]
-    targets = sorted(set(targets), key=targets.index)
+    signals = filter(lambda x: x.type == 'analogsignal', block.data_arrays)
 
-    selected = targets[target_index]  # NEST id of the map layer neuron
-
-    datasets = filter(lambda x: x.attrs['target'] == selected, all_datasets)
-    weights = np.array([np.array(w) for w in datasets])
-
-    return single_weight_evolution(weights, str(selected))
-
-
-@with_data
-def time_series(f, neuron_id):
-    """
-    Voltage dynamics of a particular neuron
-
-    :param f:           file path with recorded weights data
-    :param neuron_id:   nest ID of the neuron
-    :return:
-    """
-    neuron = f['voltage'][str(neuron_id)]
-
-    times = np.array(neuron['times'])
-    events = np.array([neuron['values'], neuron['values']])
+    events = np.array([signal.data[:] for signal in signals])
+    times = np.array(signals[0].dimensions[0].ticks)
 
     return multiple_time_series(events, times)
 
@@ -133,25 +147,29 @@ if __name__ == '__main__':
 
     parser.add_argument('--file', type=str, default='weights.h5')
 
-    parser.add_argument('-w, --weights', dest='weights', action='store_true')
     parser.add_argument('-t1', type=int, default=0)
     parser.add_argument('-t2', type=int, default=-1)
 
+    parser.add_argument('-w, --weights', dest='weights', action='store_true')
     parser.add_argument('-r, --raster', dest='raster', action='store_true')
-
+    parser.add_argument('-v, --voltage', dest='voltage', action='store_true')
     parser.add_argument('-d, --dynamics', dest='dynamics', type=int)
 
-    parser.add_argument('-v, --voltage', dest='voltage', type=int)
-
     args = parser.parse_args()
-    if args.weights:
-        weights_before_and_after(args.file, t1=args.t1, t2=args.t2)
-    if args.raster:
-        raster(args.file)
-    if args.dynamics:
-        weight_dynamics_for_single(args.file, target_index=args.dynamics)
-    if args.voltage:
-        time_series(args.file, neuron_id=args.voltage)
+
+    with NixDumper(args.file, NixDumper.mode['readwrite']) as f:
+
+        s_time = int(args.t1)
+        e_time = int(args.t2) if args.t2 > -1 else f.simulation_time
+
+        if args.weights:
+            weights_before_and_after(f, t1=s_time, t2=e_time)
+        if args.raster:
+            raster(f, t1=s_time, t2=e_time)
+        if args.voltage:
+            time_series(f, t1=s_time, t2=e_time)
+        if args.dynamics:
+            weight_dynamics_for_single(f, t1=s_time, t2=e_time, target_index=args.dynamics)
 
     plt.show()
 

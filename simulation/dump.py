@@ -6,6 +6,7 @@ class NixDumper(object):
 
     mode = {
         'readonly': nix.FileMode.ReadOnly,
+        'readwrite': nix.FileMode.ReadWrite,
         'overwrite': nix.FileMode.Overwrite
     }
 
@@ -21,7 +22,10 @@ class NixDumper(object):
         if ex_type:
             return False
 
-    def create_block(self, name, input_layer, map_layer):
+    def create_block(self, name, sim_time, input_layer, map_layer):
+        metadata = self._nf.create_section("simulation", "simulation")
+        metadata.create_property('simulation_time', nix.Value(sim_time))
+
         block = self._nf.create_block(name, 'simulation')
 
         layer_i = block.create_source('input_layer', 'layer')
@@ -33,19 +37,22 @@ class NixDumper(object):
         new_neuron = lambda id: layer_m.create_source(str(id), 'neuron')
         map(new_neuron, map_layer.nodes)
 
+    @property
+    def blocks(self):
+        return self._nf.blocks
+
+    @property
+    def simulation_time(self):
+        metadata = self._nf.sections[0]
+        sim_time = metadata.get_property_by_name('simulation_time')
+        return int(sim_time.values[0].value)
+
     def get_block_by_name(self, name):
-        try:
-            return filter(lambda x: x.name == str(name), self._nf.blocks)[0]
-        except IndexError:
-            raise NameError("Block with name %s does not exist" % name)
+        return filter(lambda x: x.name == str(name), self.blocks)[0]
 
     def get_neuron_by_name(self, block_name, neuron_name):
         block = self.get_block_by_name(block_name)
-
-        try:
-            return block.find_sources(lambda x: x.name == str(neuron_name))[0]
-        except IndexError:
-            raise NameError("Source with name %s does not exist" % neuron_name)
+        return block.find_sources(lambda x: x.name == str(neuron_name))[0]
 
     def get_neurons_for_layer(self, block_name, layer_name):
         block = self.get_block_by_name(block_name)
@@ -153,10 +160,13 @@ class NixDumper(object):
         matrix = block.create_data_array(*wargs)
 
         matrix.data[:] = weights
-        matrix.append_range_dimension(sources)
-        matrix.append_range_dimension(targets)
-        matrix.append_range_dimension(times)
-        matrix.dimensions[2].unit = 'ms'
+        source_d = matrix.append_range_dimension(sources)
+        source_d.label = 'sources'
+        target_d = matrix.append_range_dimension(targets)
+        target_d.label = 'targets'
+        time_d = matrix.append_range_dimension(times)
+        time_d.label = 'time'
+        time_d.unit = 'ms'
 
         return matrix
 
