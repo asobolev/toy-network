@@ -82,7 +82,6 @@ def single_weight_evolution(weights, neuron_id):
     """
     fig = figure(figsize=(15, 10))
 
-    #ax_w = fig.add_subplot(111)
     ax_w = fig.add_axes([0.12, 0.2, 0.78, 0.75])
     ax_w.grid()
     xlabel = 'time steps'

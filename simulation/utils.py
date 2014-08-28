@@ -55,3 +55,17 @@ def weights_as_matrix(synapse_list):
     get_weights = lambda synapses: [x['weight'] for x in synapses]
 
     return np.array([get_weights(filter(source_filter, synapse_list)) for source in sources])
+
+
+def find_nearest(array, t1, t2):
+    """
+    Returns indexes of nearest values for t1, t2 in array.
+
+    :param array:   1D numpy array of type dtype
+    :param t1:      value of type dtype
+    :param t2:      value of type dtype
+    :return:        indexes of nearest values in array
+    """
+    li = int((np.abs(array - t1)).argmin())
+    ri = int((np.abs(array - t2)).argmin())
+    return li, ri

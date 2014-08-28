@@ -27,6 +27,7 @@ Example:
 import argparse
 import numpy as np
 
+from reduced.simulation.utils import find_nearest
 from reduced.simulation.dump import NixDumper
 from reduced.simulation.plot.weights import *
 from reduced.simulation.plot.dynamics import raster_plot, multiple_time_series
@@ -68,10 +69,10 @@ def weights_before_and_after(f, t1, t2):
     time_d = filter(lambda x: x.label == 'time', weights.dimensions)[0]
     times = np.array(time_d.ticks)
 
-    find_nearest = lambda t: int((np.abs(times - t)).argmin())
+    li, ri = find_nearest(times, t1, t2)
 
-    weights_before = weights.data[:,:,find_nearest(t1)]
-    weights_after = weights.data[:,:,find_nearest(t2)]
+    weights_before = weights.data[:,:,li]
+    weights_after = weights.data[:,:,ri]
 
     return weights_multiple([weights_before, weights_after])
 
@@ -93,9 +94,8 @@ def weight_dynamics_for_single(f, t1, t2, target_index=0):
     time_d = filter(lambda x: x.label == 'time', weights.dimensions)[0]
     times = np.array(time_d.ticks)
 
-    find_nearest = lambda t: int((np.abs(times - t)).argmin())
-
-    weights = weights.data[:,target_index,find_nearest(t1):find_nearest(t2)]
+    li, ri = find_nearest(times, t1, t2)
+    weights = weights.data[:,target_index,li:ri]
 
     return single_weight_evolution(weights, str(target_d.ticks[target_index]))
 
@@ -113,14 +113,19 @@ def raster(f, t1, t2):
     is_spiketrain = lambda x: x.type == 'spiketrain'
     spiketrains = filter(is_spiketrain, block.data_arrays)
 
-    times = reduce(lambda x, y: x + list(y.data[:]), spiketrains, [])
+    times = np.array(reduce(lambda x, y: x + list(y.data[:]), spiketrains, []))
 
     senders = []
     for st in spiketrains:
         name = st.sources[0].name
         senders += [int(name) for i in range(len(st.data))]
 
-    return raster_plot(np.array(times), np.array(senders))
+    compiled = np.array(zip(times, senders))
+    compiled = compiled[compiled[:,0].argsort()]
+
+    li, ri = find_nearest(compiled[:,0], t1, t2)
+
+    return raster_plot(compiled[:,0][li:ri], compiled[:,1][li:ri])
 
 
 def time_series(f, t1, t2):
@@ -134,11 +139,12 @@ def time_series(f, t1, t2):
     block = f.blocks[0]
 
     signals = filter(lambda x: x.type == 'analogsignal', block.data_arrays)
-
-    events = np.array([signal.data[:] for signal in signals])
     times = np.array(signals[0].dimensions[0].ticks)
 
-    return multiple_time_series(events, times)
+    li, ri = find_nearest(times, t1, t2)
+    events = np.array([signal.data[li:ri] for signal in signals])
+
+    return multiple_time_series(events, times[li:ri])
 
 
 if __name__ == '__main__':

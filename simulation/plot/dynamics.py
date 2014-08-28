@@ -76,7 +76,7 @@ def layer_co_dynamics(i_events, m_events, times):
         ax.set_yticklabels(["N%s" % str(x) for x in range(num_rows)])
 
         ax.set_xlabel('time (ms)')
-        ax.set_ylabel('events (N) with diff %f (ms)' % dr)
+        ax.set_ylabel('events (N) with diff %f (mV)' % dr)
 
     return fig
 
