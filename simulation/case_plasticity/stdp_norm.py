@@ -1,4 +1,22 @@
+#!/usr/bin/env python
+
+"""
+Creates several plots according to a results of a simulation.
+
+Usage: ./stdp_norm.py [-i <number>] [-r <weight>]
+
+Arguments:
+'-i', type=int      number of input neurons
+'-w', type=float    weight for all connections, random if -1
+
+Example:
+
+./stdp_norm.py -i 3
+
+"""
+
 import nest
+import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -16,7 +34,7 @@ def inject_current(nest_id, amplitude, start, stop):
     nest.Connect(dc, [nest_id])
 
 
-def execute():
+def execute(neurons_count, conn_weight):
     nest.ResetKernel()
 
     neuron_setup = {
@@ -30,7 +48,7 @@ def execute():
     new_neuron = lambda: nest.Create("iaf_psc_alpha", params=neuron_setup)[0]
 
     # single input neuron
-    inputs = [new_neuron() for i in range(3)]
+    inputs = [new_neuron() for i in range(neurons_count)]
 
     # single output neuron
     outputs = [new_neuron()]
@@ -46,8 +64,13 @@ def execute():
     }
     nest.CopyModel('stdp_pl_norm_synapse_hom', 'plastic', synapse_setup)
 
+    if conn_weight > 0:
+        weights = conn_weight * np.ones(neurons_count)
+    else:
+        weights = 100.0 * np.random.rand(neurons_count)
+
     syn_spec = lambda x: {'weight': x, 'model': 'plastic'}
-    for input_id, weight in zip(inputs, [10., 10., 10.]):
+    for input_id, weight in zip(inputs, weights):
         nest.Connect([input_id], outputs, syn_spec=syn_spec(weight))
 
     connections = nest.GetConnections(inputs, outputs)
@@ -81,10 +104,17 @@ def execute():
         output.append(nest.GetStatus([node_id], 'events')[0])
 
     events = np.array([event['V_m'] for event in output])
-    fig = multiple_time_series(events, output[0]['times'])
-
-    plt.show()
+    return multiple_time_series(events, output[0]['times'])
 
 
 if __name__ == '__main__':
-    execute()
+    parser = argparse.ArgumentParser(description='Analyse')
+
+    parser.add_argument('-i', type=int, default=3)
+    parser.add_argument('-w', type=float, default=10.0)
+
+    args = parser.parse_args()
+
+    execute(args.i, args.w)
+
+    plt.show()
