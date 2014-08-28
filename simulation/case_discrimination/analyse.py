@@ -31,6 +31,7 @@ from reduced.simulation.utils import find_nearest
 from reduced.simulation.dump import NixDumper
 from reduced.simulation.plot.weights import *
 from reduced.simulation.plot.dynamics import raster_plot, multiple_time_series
+from reduced.simulation.plot.dynamics import single_line
 
 
 # ----------------
@@ -147,6 +148,27 @@ def time_series(f, t1, t2):
     return multiple_time_series(events, times[li:ri])
 
 
+def weight_sum_evolution(f, t1, t2):
+    """
+    Evolution of the sum of weights in time.
+
+    :param f:   NixDumper instance with recorded weights data
+    :param t1:  start time (int)
+    :param t2:  end time (int)
+    """
+    block = f.blocks[0]
+
+    weights = filter(lambda x: x.type == 'synapses', block.data_arrays)[0]
+
+    time_d = filter(lambda x: x.label == 'time', weights.dimensions)[0]
+    times = np.array(time_d.ticks)
+
+    li, ri = find_nearest(times, t1, t2)
+    weight_sums = [np.array(weights.data[:,:,x]).sum() for x in range(li, ri)]
+
+    return single_line(times[li:ri], np.array(weight_sums))
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Analyse')
 
@@ -158,6 +180,7 @@ if __name__ == '__main__':
     parser.add_argument('-w, --weights', dest='weights', action='store_true')
     parser.add_argument('-r, --raster', dest='raster', action='store_true')
     parser.add_argument('-v, --voltage', dest='voltage', action='store_true')
+    parser.add_argument('-e, --evolution', dest='evo', action='store_true')
     parser.add_argument('-d, --dynamics', dest='dynamics', type=int)
 
     args = parser.parse_args()
@@ -173,6 +196,8 @@ if __name__ == '__main__':
             raster(f, t1=s_time, t2=e_time)
         if args.voltage:
             time_series(f, t1=s_time, t2=e_time)
+        if args.evo:
+            weight_sum_evolution(f, t1=s_time, t2=e_time)
         if args.dynamics:
             weight_dynamics_for_single(f, t1=s_time, t2=e_time, target_index=args.dynamics)
 

@@ -1,9 +1,25 @@
 import numpy as np
 
+from scipy.interpolate import pchip
 from matplotlib.pyplot import figure
 from matplotlib.collections import LineCollection
 from render.raster import *
 
+
+# ----------------
+# Helper functions
+# ----------------
+
+def get_interpolated(x, y):
+    # dense x and interpolator for the smooth curve for plotting
+    xx = np.linspace(x[0], x[-1], len(x) * 10)
+    interp = pchip(x, y)
+    return xx, interp(xx)
+
+
+# ------------------
+# Plotting functions
+# ------------------
 
 def multiple_time_series(events, times):
     """
@@ -97,5 +113,26 @@ def raster_plot(times, senders):
 
     title = 'Spike events'
     fig.canvas.set_window_title(title)
+
+    return fig
+
+
+def single_line(x, y, title=None):
+    """
+    Plots a single line x, y.
+
+    :param x:   x-values
+    :param y:   y-values
+    """
+    fig = figure(figsize=(15, 10))
+
+    ax = fig.add_subplot(111)
+
+    ax.plot(*get_interpolated(x, y))
+    #plt.plot(x, y, 'bo')
+    ax.grid(True)
+
+    if title:
+        fig.canvas.set_window_title(title)
 
     return fig

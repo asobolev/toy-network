@@ -43,7 +43,7 @@ def simulate(simulation_time, config_path, output_path):
 
     i_s_i = setup_dict['GKLEARN_5X5_0'].i_s_i
     stimuli_duration = setup_dict['GKLEARN_5X5_0'].stimuli_duration
-    phase = 10 * 4 * (i_s_i + stimuli_duration)
+    phase = 100 * 4 * (i_s_i + stimuli_duration)
     time_passed = 0
 
     spike_detector_i = SpikeDetector(network.input_layer.nodes)
@@ -59,11 +59,11 @@ def simulate(simulation_time, config_path, output_path):
     #--------------------------------------------------------
 
     while time_passed < simulation_time:
-        nest.Simulate(phase)
-        time_passed += phase
-
         spider.append(get_as_dict(network.input_layer.synapses))
         syn_times.append(time_passed)
+
+        nest.Simulate(phase)
+        time_passed += phase
 
     #-------------------
     # Dump synaptic data

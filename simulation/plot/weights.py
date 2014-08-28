@@ -76,7 +76,7 @@ def neuron_ids_in_layer(layer):
 
 def single_weight_evolution(weights, neuron_id):
     """
-    Creates a weight evolution figure for particular map neuron.
+    Creates a weight evolution figure for a particular map neuron.
 
     :param weights: numpy 2D array with float values
     """
