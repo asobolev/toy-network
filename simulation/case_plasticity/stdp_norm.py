@@ -85,15 +85,14 @@ def execute(neurons_count, conn_weight):
 
     # simulation
     scales = []
-    for t in range(20):  # 10 seconds in total
+    for t in range(50):
         state = [nest.GetStatus([synapse_id])[0] for synapse_id in connections]
         scales.append(state)
 
-        amplitude = 10.0 if t < 2 else 1.0
         for i, neuron_id in enumerate(inputs):
             start = t*1000.0 + i*200.0 + 200.0
             stop = start + 50.0 if i < 2 else start + 100.0
-            inject_current(neuron_id, amplitude, start, stop)
+            inject_current(neuron_id, 2.0, start, stop)
 
         nest.Simulate(1000.0)
 
