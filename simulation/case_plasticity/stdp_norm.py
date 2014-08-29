@@ -89,10 +89,12 @@ def execute(neurons_count, conn_weight):
         state = [nest.GetStatus([synapse_id])[0] for synapse_id in connections]
         scales.append(state)
 
+        start, stop = 0.0, 0.0
         for i, neuron_id in enumerate(inputs):
-            start = t*1000.0 + i*200.0 + 200.0
-            stop = start + 50.0 if i < 2 else start + 100.0
-            inject_current(neuron_id, 2.0, start, stop)
+            if i % 3 == 0:
+                start = t*1000.0 + int(i/3)*200.0 + 200.0
+                stop = start + 50.0 if i < 2*3 else start + 100.0
+            inject_current(neuron_id, 1.2, start, stop)
 
         nest.Simulate(1000.0)
 
@@ -109,7 +111,7 @@ def execute(neurons_count, conn_weight):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Analyse')
 
-    parser.add_argument('-i', type=int, default=3)
+    parser.add_argument('-i', type=int, default=9)
     parser.add_argument('-w', type=float, default=10.0)
 
     args = parser.parse_args()
