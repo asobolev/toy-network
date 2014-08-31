@@ -25,17 +25,6 @@ from reduced.network.layer import InputLayer
 from reduced.simulation.plot.dynamics import *
 
 
-def inject_current(nest_id, amplitude, start, stop):
-    dc = nest.Create("dc_generator")
-    nest.SetStatus(dc, [{
-        "amplitude": amplitude,
-        "start": start,
-        "stop": stop
-    }])
-
-    nest.Connect(dc, [nest_id])
-
-
 def execute(conn_weight):
     nest.ResetKernel()
 
@@ -103,16 +92,10 @@ def execute(conn_weight):
     for t in range(50):
         state = [nest.GetStatus([synapse_id])[0] for synapse_id in connections]
         scales.append(state)
-
-        start, stop = 0.0, 0.0
-        for i, neuron_id in enumerate(inputs):
-            if i % 3 == 0:
-                start = t*1000.0 + int(i/3)*200.0 + 200.0
-                stop = start + 100.0 #if i < 2*3 else start + 100.0
-            inject_current(neuron_id, 2.0, start, stop)
-
         nest.Simulate(1000.0)
 
+    # results
+    print [x['weight'] for x in scales[0]]
     print [x['weight'] for x in scales[-1]]
 
     output = []
