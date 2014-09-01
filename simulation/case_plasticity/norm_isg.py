@@ -16,6 +16,7 @@ Example:
 
 import nest
 import argparse
+import itertools
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -28,7 +29,7 @@ from reduced.simulation.plot.dynamics import *
 def execute(conn_weight):
     nest.ResetKernel()
 
-    # 5x5 input layer
+    # 3x3 input layer
     input_setup = ISGStraightSetup(**{
         "stimuli_duration": 15.0,
         "i_s_i": 85.0,
@@ -43,7 +44,7 @@ def execute(conn_weight):
     })
     input_layer = InputLayer(2000.0, input_setup, neuron_setup, x_dim=3, y_dim=3)
     
-    # single output neuron
+    # 3x3 output layer
     neuron_setup = NeuronSetup(**{
         "model": "iaf_psc_alpha",
         "para_dict": {
@@ -55,12 +56,13 @@ def execute(conn_weight):
             "V_reset": -55.0
         }
     })
-    output_1 = nest.Create(neuron_setup.model, params=neuron_setup.para_dict)[0]
-    output_2 = nest.Create(neuron_setup.model, params=neuron_setup.para_dict)[0]
-    #map_layer = MapLayer(neuron_setup, , x_dim=3, y_dim=3)
+    #map_layer = MapLayer(neuron_setup, x_dim=2, y_dim=1)
+    outputs = []
+    for i in range(4):
+        outputs.append(nest.Create(neuron_setup.model, params=neuron_setup.para_dict)[0])
 
     inputs = input_layer.nodes
-    outputs = [output_1, output_2]
+    #outputs = map_layer.nodes
 
     # plastic connection
     synapse_setup = {
@@ -74,11 +76,9 @@ def execute(conn_weight):
     nest.CopyModel('stdp_pl_norm_synapse_hom', 'plastic', synapse_setup)
 
     syn_spec = lambda x: {'weight': x, 'model': 'plastic'}
-    for input_id in inputs:
+    for input_id, output_id in itertools.product(inputs, outputs):
         weight = 200.0 * np.random.random()
-        nest.Connect([input_id], [outputs[0]], syn_spec=syn_spec(weight))
-        weight = 200.0 * np.random.random()
-        nest.Connect([input_id], [outputs[1]], syn_spec=syn_spec(weight))
+        nest.Connect([input_id], [output_id], syn_spec=syn_spec(weight))
 
     connections = nest.GetConnections(inputs, outputs)
 
