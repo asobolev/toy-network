@@ -5,7 +5,7 @@ from reduced.setup.base import SetupBase
 class ConnectionSetup(SetupBase):
 
     model = None
-    weight = None
+    weight_coeff = None
     quantity = None
 
     @property

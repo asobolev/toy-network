@@ -4,6 +4,7 @@ from reduced.setup.base import SetupBase
 
 class ISGStraightSetup(SetupBase):
 
+    weight = 2000.0
     movie_path = None
     stimuli_duration = None
     i_s_i = None

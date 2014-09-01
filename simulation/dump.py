@@ -72,8 +72,6 @@ class NixDumper(object):
         :return:            stimulus as MultiTag
         """
         def dump_array(name, unit, data):
-            assert type(data[0]) == float
-
             iargs = [name, 'array', nix.DataType.Float, (len(data),)]
             simple_array = block.create_data_array(*iargs)
             simple_array.data[:] = data

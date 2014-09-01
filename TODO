@@ -12,9 +12,10 @@
 - add stimulus object instead of ISG
 - (?) move setup into models
 - refactor plots: split (generic) rendering algorithms and figures
-- use Neuron init method to create neurons, not CreateLayer
-- make t1 - t2 for all plots in analysis
-- dump weights as matrix
++ use Neuron init method to create neurons, not CreateLayer
++ make t1 - t2 for all plots in analysis
++ dump weights as matrix
+- move from JSON to YAML
 
 
 cancelled:

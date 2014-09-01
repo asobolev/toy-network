@@ -14,13 +14,14 @@ Arguments:
 '-w, --weights'                 plot weights at times t1, t2
 '-r, --raster'                  plot all spiketrains
 '-v, --voltage'                 plot voltage dynamics
+'-e, --evo'                     plot weight sum evolution
 '-d, --dynamics', type=int      plot weight dynamics for a neuron with ID
 
 Example:
 
-./analyse.py --file weights.h5 -w -r
+./analyse.py --file sim.h5 -w -r
 
-./analyse.py --file weights.h5 -w -t1=0 -t2=2500
+./analyse.py --file sim.h5 -w -t1=0 -t2=2500
 
 """
 

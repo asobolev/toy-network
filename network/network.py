@@ -25,7 +25,7 @@ class ToyNetwork(object):
         :return:
         """
 
-        self._input_layer = InputLayer(3000., ISG_SETUP, INPUT_NEURON)
+        self._input_layer = InputLayer(ISG_SETUP, INPUT_NEURON)
         self._map_layer = MapLayer(MAP_NEURON)
 
         # plastic connections from input to map layer

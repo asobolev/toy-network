@@ -22,16 +22,7 @@ class Layer(NestObject):
         self._x_dim = x_dim
         self._y_dim = y_dim
 
-        nest_id = tp.CreateLayer({
-            'rows': x_dim,
-            'columns': y_dim,
-            'elements': neuron_setup.model,
-            'edge_wrap': True
-        })[0]
-        super(Layer, self).__init__(nest_id)
-
-        node_ids = nest.GetNodes([self._nest_id])[0]
-        self._neurons = [Neuron(nid) for nid in node_ids]
+        self._neurons = [Neuron(neuron_setup) for i in range(x_dim*y_dim)]
 
     # methods to access neurons as a list
 
@@ -113,28 +104,30 @@ class Layer(NestObject):
 
 class InputLayer(Layer):
 
-    def __init__(self, input_weight, ISG_setup, neuron_setup, x_dim=5, y_dim=5):
+    def __init__(self, input_setup, neuron_setup, x_dim=5, y_dim=5):
         """
         Constructor of the input layer. An input layer is a flat layer with
         neurons that fire according to the intensity of the presented images as
          sequence in time. Images are parsed from the given movie file inside
          ImageSequenceGeneratorSetup settings.
 
-        :param input_weight     weight for the connections between the image
-                                generator and the neurons
-        :param ISG_setup:       ImageSequenceGeneratorSetup object with image
-                                parsing settings
+        :param input_setup:    ImageSequenceGeneratorSetup object with image
+                               parsing settings
+        :param neuron_setup:   NeuronSetup object with settings for the
+                                neurons for the layer
+        :param x_dim:           number of neurons in X-dimension
+        :param y_dim:           number of neurons in Y-dimension
         """
         super(InputLayer, self).__init__(neuron_setup, x_dim, y_dim)
 
         self._movie = nest.Create(
-            'image_sequence_generator', 1, ISG_setup.as_nest_dict
+            'image_sequence_generator', 1, input_setup.as_nest_dict
         )[0]
 
         nodes = iter(self.nodes)
         for x, y in itertools.product(range(x_dim), range(y_dim)):
             node = nodes.next()
-            nest.SetStatus([node], {'x': x, 'y': y, 'weight': input_weight})
+            nest.SetStatus([node], {'x': x, 'y': y, 'weight': input_setup.weight})
             nest.Connect([self._movie], [node])
 
 

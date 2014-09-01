@@ -6,7 +6,9 @@ from synapse import Synapse
 
 class Neuron(NestObject):
 
-    def __init__(self, nest_id):
+    def __init__(self, neuron_setup):
+        nest_id = nest.Create(neuron_setup.model, params=neuron_setup.para_dict)[0]
+
         super(Neuron, self).__init__(nest_id)
 
     def __repr__(self):
@@ -22,8 +24,11 @@ class Neuron(NestObject):
         :param delay:       delay (float)
         :param model:       model of the synapse (string)
         """
+        syn_spec = lambda w: {'weight': w, 'model': model, 'delay': delay}
+
         target_ids = [x.id for x in neurons]
-        nest.DivergentConnect([self.id], target_ids, weights, delay, model)
+        for neuron_id, weight in zip(target_ids, weights):
+            nest.Connect([self.id], [neuron_id], syn_spec=syn_spec(weight))
 
     @property
     def synapses(self):

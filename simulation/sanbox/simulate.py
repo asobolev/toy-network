@@ -43,7 +43,7 @@ def simulate(simulation_time, config_path, output_path):
 
     i_s_i = setup_dict['GKLEARN_5X5_0'].i_s_i
     stimuli_duration = setup_dict['GKLEARN_5X5_0'].stimuli_duration
-    phase = 100 * 4 * (i_s_i + stimuli_duration)
+    phase = 4 * (i_s_i + stimuli_duration)
     time_passed = 0
 
     spike_detector_i = SpikeDetector(network.input_layer.nodes)
