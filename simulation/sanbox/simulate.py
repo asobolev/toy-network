@@ -115,7 +115,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Simulation')
 
     parser.add_argument('-t, --time', dest='time', type=int)
-    parser.add_argument('-c, --conf', dest='conf', type=str, default='configuration/01.json')
+    parser.add_argument('-c, --conf', dest='conf', type=str, default='configuration/01_3x3_orthogonal.json')
     parser.add_argument('-o, --output', dest='output', type=str, default='weights.h5')
 
     args = parser.parse_args()

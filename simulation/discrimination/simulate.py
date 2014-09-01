@@ -8,7 +8,7 @@ simulation results are stored in an HDF5 file (NIX format).
 
 Example:
 
-./simulate.py -t 20000 -p 1000 -c "config/01.json"
+./simulate.py -t 20000 -p 1000 -c "config/01_3x3_orthogonal.json"
 
 """
 
@@ -131,7 +131,7 @@ if __name__ == '__main__':
 
     parser.add_argument('-t, --time', dest='time', type=int)
     parser.add_argument('-p, --phase', dest='phase', type=int)
-    parser.add_argument('-c, --conf', dest='conf', type=str, default='config/01.json')
+    parser.add_argument('-c, --conf', dest='conf', type=str, default='config/01_3x3_orthogonal.json')
     parser.add_argument('-o, --output', dest='output', type=str, default='sim.h5')
 
     args = parser.parse_args()

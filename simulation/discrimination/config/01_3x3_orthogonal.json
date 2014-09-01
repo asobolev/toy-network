@@ -33,7 +33,7 @@
     },
     "FWD_CONN": {
         "model": "stdp_pl_norm_synapse_hom",
-        "weight_coeff": 100
+        "weight_coeff": 200.0
     },
     "INH_CONN": {
         "model": "static_synapse",
@@ -44,8 +44,8 @@
         "alpha": 0.1,
         "lambda_": 0.01,
         "weight": 0.05,
-        "norm_freq": 400.0,
-        "norm_fac1": 0.9,
+        "norm_freq": 600.0,
+        "norm_fac1": 0.8,
         "norm_fac0": 0.2
     }
 }

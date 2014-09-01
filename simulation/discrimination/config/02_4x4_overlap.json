@@ -1,0 +1,51 @@
+{
+    "INPUT_LAYER": {
+        "x_dim": 5,
+        "y_dim": 5
+    },
+    "MAP_LAYER": {
+        "x_dim": 2,
+        "y_dim": 2
+    },
+    "STIMULI": {
+        "weight": 2000.0,
+        "stimuli_duration": 50.0,
+        "i_s_i": 50.0,
+        "movie_path": "../../data/5x5gklearn1.idlmov"
+    },
+    "INPUT_NEURON": {
+        "model": "pixel_iaf_psc_exp",
+        "para_dict": {},
+        "lat_ex_input_ports": [],
+        "noise_firing_rate": 12000.0,
+        "noise_amplitude": 13.9
+    },
+    "MAP_NEURON": {
+        "model": "iaf_psc_alpha",
+        "para_dict": {
+            "E_L": -65.0,
+            "C_m": 1.0,
+            "tau_m": 20.9,
+            "t_ref": 2.0,
+            "V_th": -50.0,
+            "V_reset": -55.0
+        }
+    },
+    "FWD_CONN": {
+        "model": "stdp_pl_norm_synapse_hom",
+        "weight_coeff": 100
+    },
+    "INH_CONN": {
+        "model": "static_synapse",
+        "weight": -100.0,
+        "quantity": 12
+    },
+    "SYNAPSE": {
+        "alpha": 0.1,
+        "lambda_": 0.01,
+        "weight": 0.05,
+        "norm_freq": 400.0,
+        "norm_fac1": 0.9,
+        "norm_fac0": 0.2
+    }
+}
