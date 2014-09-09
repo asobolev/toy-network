@@ -14,6 +14,7 @@ Example:
 
 import nest
 import argparse
+import random
 import numpy as np
 
 from reduced.simulation.utils import *
@@ -51,6 +52,15 @@ def simulate(simulation_time, phase, config_path, output_path):
     for neuron in input_layer:
         weights = list(wc * np.random.rand(len(map_layer)))
         neuron.synapse_with(map_layer, weights, model='plastic')
+
+    # inhibitory connections inside the map layer
+    if 'INH_CONN' in setup_dict:
+        conn_setup = ConnectionSetup(**setup_dict['INH_CONN'])
+        for neuron in map_layer:
+            # may include itself
+            some = random.sample(map_layer, conn_setup.quantity)
+            weights = conn_setup.weight_coeff * np.ones(len(some))
+            neuron.synapse_with(some, weights, model=conn_setup.model)
 
     #--------------
     # Devices setup

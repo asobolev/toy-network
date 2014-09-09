@@ -37,8 +37,8 @@
     },
     "INH_CONN": {
         "model": "static_synapse",
-        "weight": -100.0,
-        "quantity": 12
+        "weight_coeff": -1.0,
+        "quantity": 2
     },
     "SYNAPSE": {
         "alpha": 0.1,

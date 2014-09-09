@@ -173,7 +173,7 @@ def weight_sum_evolution(f, t1, t2):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Analyse')
 
-    parser.add_argument('--file', type=str, default='weights.h5')
+    parser.add_argument('--file', type=str, default='sim.h5')
 
     parser.add_argument('-t1', type=int, default=0)
     parser.add_argument('-t2', type=int, default=-1)
