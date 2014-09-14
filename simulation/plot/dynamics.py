@@ -128,8 +128,9 @@ def single_line(x, y, title=None):
 
     ax = fig.add_subplot(111)
 
+    ax.set_xlabel('time (ms)')
+    ax.set_ylabel('total weight sum')
     ax.plot(*get_interpolated(x, y))
-    #plt.plot(x, y, 'bo')
     ax.grid(True)
 
     if title:

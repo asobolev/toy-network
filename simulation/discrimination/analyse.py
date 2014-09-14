@@ -209,11 +209,17 @@ def spike_triggered_averages(f, t1, t2, kernel=25, offset=-2):
     for nn, neuron in enumerate(map_sources):
         filt = lambda x: x.type == 'spiketrain' and neuron in x.sources
         spiketrain = np.array(filter(filt, block.data_arrays)[0].data[:])
+
+        li, ri = find_nearest(spiketrain, t1, t2)
+        spiketrain = spiketrain[li:ri]
+
         bins = np.array([spiketrain - kernel + offset, spiketrain + offset])
 
         sta_matrix = np.zeros([len(input_spiketrains), len(spiketrain)])
         for i, st in enumerate(input_spiketrains):
-            data = st.data[:]
+            li, ri = find_nearest(st.data[:], t1, t2)
+            data = st.data[li:ri]
+
             for j in range(bins.shape[-1]):
                 sta_matrix[i][j] = ((data >= bins[0][j]) & (data <= bins[1][j])).sum()
 
