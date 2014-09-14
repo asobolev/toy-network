@@ -28,6 +28,8 @@ Example:
 import argparse
 import numpy as np
 
+from scipy.interpolate import pchip
+
 from reduced.simulation.utils import find_nearest
 from reduced.simulation.dump import NixDumper
 from reduced.simulation.plot.weights import *
@@ -179,6 +181,54 @@ def weight_sum_evolution(f, t1, t2):
     weight_sums = [np.array(weights.data[:,:,x]).sum() for x in range(li, ri)]
 
     return single_line(times[li:ri], np.array(weight_sums))
+
+
+def spike_triggered_averages(f, t1, t2, kernel=25, offset=-2):
+    """
+    Evolution of the sum of weights in time.
+
+    :param f:       NixDumper instance with recorded weights data
+    :param t1:      start time (int)
+    :param t2:      end time (int)
+    :param kernel:  time kernel for the STA (int)
+    :param offset:  offset relative to the STA kernel (int)
+    """
+    def get_interpolated(x, y):
+        # dense x and interpolator for the smooth curve for plotting
+        xx = np.linspace(x[0], x[-1], len(x) * 10)
+        interp = pchip(x, y)
+        return xx, interp(xx)
+
+    block = f.blocks[0]
+
+    input_sources = f.get_neurons_for_layer(block.name, 'input_layer')
+    map_sources = f.get_neurons_for_layer(block.name, 'map_layer')
+
+    filt = lambda x: x.type == 'spiketrain' and x.sources[0] in input_sources
+    sort_key = lambda x: int(x.sources[0].name)
+    input_spiketrains = sorted(filter(filt, block.data_arrays), key=sort_key)
+
+    fig = figure(figsize=(15, 10))
+    r_num = np.floor(np.sqrt(len(map_sources)))
+    c_num = np.ceil(len(map_sources) / r_num)
+
+    for nn, neuron in enumerate(map_sources):
+        filt = lambda x: x.type == 'spiketrain' and neuron in x.sources
+        spiketrain = np.array(filter(filt, block.data_arrays)[0].data[:])
+        bins = np.array([spiketrain - kernel + offset, spiketrain + offset])
+
+        sta_matrix = np.zeros([len(input_spiketrains), len(spiketrain)])
+        for i, st in enumerate(input_spiketrains):
+            data = st.data[:]
+            for j in range(bins.shape[-1]):
+                sta_matrix[i][j] = ((data >= bins[0][j]) & (data <= bins[1][j])).sum()
+
+        ax = fig.add_subplot(r_num, c_num, nn + 1)
+        x = [int(st.sources[0].name) for st in input_spiketrains]
+        y = np.mean(sta_matrix, axis=1)
+        ax.plot(*get_interpolated(x, y))
+
+    return fig
 
 
 if __name__ == '__main__':
