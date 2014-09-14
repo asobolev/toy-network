@@ -31,7 +31,7 @@ import numpy as np
 from reduced.simulation.utils import find_nearest
 from reduced.simulation.dump import NixDumper
 from reduced.simulation.plot.weights import *
-from reduced.simulation.plot.dynamics import raster_plot, multiple_time_series
+from reduced.simulation.plot.dynamics import raster_plot, layer_co_dynamics #multiple_time_series
 from reduced.simulation.plot.dynamics import single_line
 
 
@@ -132,7 +132,7 @@ def raster(f, t1, t2):
 
 def time_series(f, t1, t2):
     """
-    Render Voltage dynamics of all analogsignals in a file
+    Render voltage dynamics of all analogsignals in a file
 
     :param f:   NixDumper instance with recorded weights data
     :param t1:  start time (int)
@@ -140,13 +140,24 @@ def time_series(f, t1, t2):
     """
     block = f.blocks[0]
 
-    signals = filter(lambda x: x.type == 'analogsignal', block.data_arrays)
-    times = np.array(signals[0].dimensions[0].ticks)
+    input_sources = f.get_neurons_for_layer(block.name, 'input_layer')
+    map_sources = f.get_neurons_for_layer(block.name, 'map_layer')
+
+    sort_key = lambda x: int(x.sources[0].name)
+
+    filt = lambda x: x.type == 'analogsignal' and x.sources[0] in input_sources
+    i_signals = sorted(filter(filt, block.data_arrays), key=sort_key)
+
+    filt = lambda x: x.type == 'analogsignal' and x.sources[0] in map_sources
+    m_signals = sorted(filter(filt, block.data_arrays), key=sort_key)
+
+    times = np.array(i_signals[0].dimensions[0].ticks)
 
     li, ri = find_nearest(times, t1, t2)
-    events = np.array([signal.data[li:ri] for signal in signals])
+    i_events = np.array([signal.data[li:ri] for signal in i_signals])
+    m_events = np.array([signal.data[li:ri] for signal in m_signals])
 
-    return multiple_time_series(events, times[li:ri])
+    return layer_co_dynamics(i_events, m_events, times[li:ri])
 
 
 def weight_sum_evolution(f, t1, t2):

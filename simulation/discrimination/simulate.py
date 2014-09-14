@@ -16,6 +16,7 @@ import nest
 import argparse
 import random
 import numpy as np
+import itertools as it
 
 from reduced.simulation.utils import *
 from reduced.setup import *
@@ -61,6 +62,20 @@ def simulate(simulation_time, phase, config_path, output_path):
             some = random.sample(map_layer, conn_setup.quantity)
             weights = conn_setup.weight_coeff * np.ones(len(some))
             neuron.synapse_with(some, weights, model=conn_setup.model)
+
+    # excitatory connections to neighboring neurons
+    if 'EXC_CONN' in setup_dict:
+        conn_setup = ConnectionSetup(**setup_dict['EXC_CONN'])
+        for x, row in enumerate(map_layer.as_matrix):
+            for y, neuron in enumerate(row):
+                horizontal = (x-1, x, x+1 if x+1 < map_layer.x_dim else -1)
+                vertical = (y-1, y, y+1 if y+1 < map_layer.y_dim else -1)
+                coords = it.product(horizontal, vertical)
+                coords = filter(lambda q: not q == (x, y), coords)
+
+                neighbors = [map_layer.as_matrix[i][j] for i, j in coords]
+                weights = conn_setup.weight_coeff * np.ones(len(neighbors))
+                neuron.synapse_with(neighbors, weights, model=conn_setup.model)
 
     #--------------
     # Devices setup

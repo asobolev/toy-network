@@ -1,16 +1,20 @@
 {
+    "EXC_CONN": {
+        "model": "static_synapse",
+        "weight_coeff": 0.2
+    },
     "FWD_CONN": {
         "model": "stdp_pl_norm_synapse_hom",
         "weight_coeff": 200.0
     },
     "INH_CONN": {
         "model": "static_synapse",
-        "quantity": 2,
-        "weight_coeff": -1.0
+        "quantity": 8,
+        "weight_coeff": -0.2
     },
     "INPUT_LAYER": {
-        "x_dim": 3,
-        "y_dim": 3
+        "x_dim": 4,
+        "y_dim": 4
     },
     "INPUT_NEURON": {
         "lat_ex_input_ports": [],
@@ -20,8 +24,8 @@
         "para_dict": {}
     },
     "MAP_LAYER": {
-        "x_dim": 3,
-        "y_dim": 3
+        "x_dim": 4,
+        "y_dim": 4
     },
     "MAP_NEURON": {
         "model": "iaf_psc_alpha",

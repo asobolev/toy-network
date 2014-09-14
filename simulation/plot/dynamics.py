@@ -50,7 +50,7 @@ def multiple_time_series(events, times):
     ax.set_yticklabels(["N%s" % str(x) for x in range(num_rows)])
 
     ax.set_xlabel('time (ms)')
-    ax.set_ylabel('events (N) with diff %f (ms)' % dr)
+    ax.set_ylabel('events (N) with diff %f (mV)' % dr)
 
     ax.grid()
 
@@ -124,7 +124,7 @@ def single_line(x, y, title=None):
     :param x:   x-values
     :param y:   y-values
     """
-    fig = figure(figsize=(15, 10))
+    fig = figure(figsize=(11, 7))
 
     ax = fig.add_subplot(111)
 
