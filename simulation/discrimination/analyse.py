@@ -32,8 +32,9 @@ from scipy.interpolate import pchip
 
 from reduced.simulation.utils import find_nearest
 from reduced.simulation.dump import NixDumper
+from reduced.simulation.plot.stats import *
 from reduced.simulation.plot.weights import *
-from reduced.simulation.plot.dynamics import raster_plot, layer_co_dynamics #multiple_time_series
+from reduced.simulation.plot.dynamics import raster_plot, layer_co_dynamics
 from reduced.simulation.plot.dynamics import single_line
 
 
@@ -193,12 +194,6 @@ def spike_triggered_averages(f, t1, t2, kernel=25, offset=-2):
     :param kernel:  time kernel for the STA (int)
     :param offset:  offset relative to the STA kernel (int)
     """
-    def get_interpolated(x, y):
-        # dense x and interpolator for the smooth curve for plotting
-        xx = np.linspace(x[0], x[-1], len(x) * 10)
-        interp = pchip(x, y)
-        return xx, interp(xx)
-
     block = f.blocks[0]
 
     input_sources = f.get_neurons_for_layer(block.name, 'input_layer')
@@ -208,10 +203,9 @@ def spike_triggered_averages(f, t1, t2, kernel=25, offset=-2):
     sort_key = lambda x: int(x.sources[0].name)
     input_spiketrains = sorted(filter(filt, block.data_arrays), key=sort_key)
 
-    fig = figure(figsize=(15, 10))
-    r_num = np.floor(np.sqrt(len(map_sources)))
-    c_num = np.ceil(len(map_sources) / r_num)
+    x_indexes = [int(st.sources[0].name) for st in input_spiketrains]
 
+    values = []
     for nn, neuron in enumerate(map_sources):
         filt = lambda x: x.type == 'spiketrain' and neuron in x.sources
         spiketrain = np.array(filter(filt, block.data_arrays)[0].data[:])
@@ -223,12 +217,10 @@ def spike_triggered_averages(f, t1, t2, kernel=25, offset=-2):
             for j in range(bins.shape[-1]):
                 sta_matrix[i][j] = ((data >= bins[0][j]) & (data <= bins[1][j])).sum()
 
-        ax = fig.add_subplot(r_num, c_num, nn + 1)
-        x = [int(st.sources[0].name) for st in input_spiketrains]
-        y = np.mean(sta_matrix, axis=1)
-        ax.plot(*get_interpolated(x, y))
+        values.append(np.mean(sta_matrix, axis=1))
 
-    return fig
+    title = "Spike triggered averages"
+    return multiple_line_plots(np.array(values), x_indexes, title=title)
 
 
 if __name__ == '__main__':
