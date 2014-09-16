@@ -1,9 +1,9 @@
 # TODO
 
-- make weight plot functions accept axes and drow on them, thus making
++ make weight plot functions accept axes and drow on them, thus making
     several plots on the same figure possible
 + create a small network object
-- use ipynb for demos, print configurations (add repr to basesetup? as_dict)
++ use ipynb for demos, print configurations (add repr to basesetup? as_dict)
 + check dimensions for the weights plot
 + remove base configurations
 + split setup.models into several modules
@@ -11,16 +11,11 @@
 + check for convergence
 - add stimulus object instead of ISG
 - (?) move setup into models
-- refactor plots: split (generic) rendering algorithms and figures
++ refactor plots: split (generic) rendering algorithms and figures
 + use Neuron init method to create neurons, not CreateLayer
 + make t1 - t2 for all plots in analysis
 + dump weights as matrix
 - move from JSON to YAML
-
-
-cancelled:
-- integrate VoltageMonitors into neurons
-
 
 
 # NEST overall comments
@@ -33,7 +28,7 @@ cancelled:
     do they mean
 - all functions return IDs not objects (insane!) how do I control staff?!
 - usually the return value is a list even if a single object was
-    created/updated. Same with single input parameters. WTF?
+    created/updated. Same with single input parameters.
 - the permanent use of a global state is a killer..
 - model customization is implemented as a "copy" function instead of
     inheritance, which is a great limit comparing to OOP
@@ -42,14 +37,9 @@ cancelled:
 - there is no way to delete things. Useful in many cases
 
 
-# simulation configuration management
+# notes
 
 - pypet - in development + hardly uses global state
 - convert ipynb to py with
     ipython nbconvert --to=python [YOUR_NOTEBOOK].ipynb
     ipython notebook --script --pylab inline
-
-
-# questions
-
-- is there a way to access general timeline when simulation was interrupted?
