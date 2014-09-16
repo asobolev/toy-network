@@ -40,7 +40,7 @@
     },
     "STIMULI": {
         "i_s_i": 85.0,
-        "movie_path": "../../data/5x5gklearn0.idlmov",
+        "movie_path": "../../../data/5x5gklearn0.idlmov",
         "stimuli_duration": 15.0,
         "weight": 2000.0
     },
