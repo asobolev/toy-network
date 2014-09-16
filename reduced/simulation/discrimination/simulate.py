@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 
 """
-This script is aimed to build a network according to the given configuration
+This script is aimed to build a network according to the given profile
 and record the evolution of weights between input and map layer neurons. It
 runs the simulation in steps and records weights after every phase. The
 simulation results are stored in an HDF5 file (NIX format).
 
 Example:
 
-./simulate.py -t 20000 -p 1000 -c "config/01_3x3_orthogonal.json"
+./simulate.py -t 20000 -p 1000 -c "config/01_4x4_orthogonal.json"
 
 """
 
