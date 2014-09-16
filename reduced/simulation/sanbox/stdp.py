@@ -2,7 +2,7 @@ import nest
 import numpy as np
 import matplotlib.pyplot as plt
 
-from reduced.simulation.plot.dynamics import *
+from reduced.plot.dynamics import *
 
 
 def execute():

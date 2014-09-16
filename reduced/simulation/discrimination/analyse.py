@@ -32,10 +32,10 @@ from scipy.interpolate import pchip
 
 from reduced.simulation.utils import find_nearest
 from reduced.simulation.dump import NixDumper
-from reduced.simulation.plot.stats import *
-from reduced.simulation.plot.weights import *
-from reduced.simulation.plot.dynamics import raster_plot, layer_co_dynamics
-from reduced.simulation.plot.dynamics import single_line
+from reduced.plot.stats import *
+from reduced.plot.weights import *
+from reduced.plot.dynamics import raster_plot, layer_co_dynamics
+from reduced.plot.dynamics import single_line
 
 
 # ----------------

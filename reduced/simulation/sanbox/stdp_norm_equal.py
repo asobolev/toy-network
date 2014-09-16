@@ -20,7 +20,7 @@ import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 
-from reduced.simulation.plot.dynamics import *
+from reduced.plot.dynamics import *
 
 
 def inject_current(nest_id, amplitude, start, stop):
