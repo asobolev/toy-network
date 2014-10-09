@@ -36,6 +36,10 @@
 - pollution of the stdout changes depending on the global state (it grows..)
 - there is no way to delete things. Useful in many cases
 
+- NEST is FOSS but it's impossible to find a public repo
+- make build system modifies local project space, some project files - 
+  hard for versioning
+
 
 # notes
 
