@@ -38,7 +38,9 @@
 
 - model inheritance: private methods ?!
 - had to change nest kernel (names) - any workaround?
-
+- NEST is FOSS but it's impossible to find a public repo
+- make build system modifies local project space, some project files - 
+  hard for versioning
 
 
 # notes
