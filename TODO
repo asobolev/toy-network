@@ -36,6 +36,10 @@
 - pollution of the stdout changes depending on the global state (it grows..)
 - there is no way to delete things. Useful in many cases
 
+- model inheritance: private methods ?!
+- had to change nest kernel (names) - any workaround?
+
+
 
 # notes
 
