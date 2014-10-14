@@ -1,4 +1,3 @@
-import h5py
 import numpy as np
 import simplejson as json
 from reduced.setup import *
